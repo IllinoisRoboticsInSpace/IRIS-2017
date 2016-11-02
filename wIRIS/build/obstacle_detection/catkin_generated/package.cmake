@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "obstacle_detection")
+set(obstacle_detection_MAINTAINER "iris <iris@todo.todo>")
+set(obstacle_detection_DEPRECATED "")
+set(obstacle_detection_VERSION "0.0.0")
+set(obstacle_detection_BUILD_DEPENDS "pcl_conversions" "pcl_ros" "roscpp" "sensor_msgs")
+set(obstacle_detection_RUN_DEPENDS "pcl_conversions" "pcl_ros" "roscpp" "sensor_msgs")
+set(obstacle_detection_BUILDTOOL_DEPENDS "catkin")

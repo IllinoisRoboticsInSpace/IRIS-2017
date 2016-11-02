@@ -1,0 +1,50 @@
+<!-- LAUNCH FILE FOR ODROID (things needed for manual) -->
+
+<launch>
+
+  <!-- state machine -->
+  <node respawn="true" pkg="finite_state_machine" type="state_machine" 
+        name="IRIS_FSM" output="screen" >
+    <rosparam command="load" file="launch/state_machine_params.yaml" />
+  </node>
+
+  <!-- trigger for FSM -->
+  <node respawn="true" pkg="finite_state_machine" type="trigger"
+        name="FSM_trigger" >
+    <param name="frequency" value="2" />
+    <param name="topic"     value="/IRIS/FSM_trigger" />
+  </node>
+
+  <!-- trigger for serial communication -->
+  <node respawn="true" pkg="finite_state_machine" type="trigger"
+        name="serial_trigger" >
+    <param name="frequency" value="2" />
+    <param name="topic"     value="/IRIS/serial_trigger" />
+  </node>
+
+  <!-- relays for goal and odometry data -->
+  <node respawn="true" pkg="msg_relays" type="goal_relay"
+        name="goal_relay" >
+    <param name="command_topic" value="/IRIS/command" />
+  </node>
+
+  <node respawn="true" pkg="msg_relays" type="odom_relay"
+        name="odom_relay" >
+    <param name="status_topic" value="/IRIS/status" />
+  </node>
+
+  <!-- arduino serial communication node -->
+  <node respawn="true" pkg="serial_comm" type="arduino_comm.py"
+        name="arduino_comm" output="screen" >
+    <param name="topic/command"         value="/IRIS/command" />
+    <param name="topic/trigger"         value="/IRIS/serial_trigger" />
+    <param name="topic/status"          value="/IRIS/status" />
+    <param name="use_serial"            value="False" />
+    <param name="max_forward_velocity"  value="0.5" />
+    <param name="frame_id/parent"       value="/map" />
+    <param name="frame_id/child"        value="/robot_link" />
+    <param name="mining_speed_scale"    value="0.5" />
+  </node>
+
+
+</launch>

@@ -1,0 +1,2 @@
+obstacle_detection
+-DCATKIN_DEVEL_PREFIX=/home/iris/wIRIS/devel -DCMAKE_INSTALL_PREFIX=/home/iris/wIRIS/install
