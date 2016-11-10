@@ -1,8 +1,0 @@
-prefix=/home/iris/wIRIS/devel
-
-Name: obstacle_detection
-Description: Description of obstacle_detection
-Version: 0.0.0
-Cflags: -I/home/iris/wIRIS/src/obstacle_detection/include
-Libs: -L/home/iris/wIRIS/devel/lib -lobstacle_detection
-Requires: pcl_conversions pcl_ros roscpp sensor_msgs

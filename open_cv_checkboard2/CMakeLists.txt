@@ -1,8 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( checkboard_navigation )
-find_package( OpenCV REQUIRED )
-add_executable( checkboard_navigation checkboard_navigation.cpp )
-#target_link_libraries( checkboard_navigation ${OpenCV_LIBS} )
-#target_link_libraries( checkboard_navigation ~/Desktop/open_cv_checkboard/__old_test/opencv-master/build/lib/libopencv_calib3d.so -lopencv_calib3d )
-target_link_libraries( checkboard_navigation ${OpenCV_LIBS} )
-include_directories( /usr/include/ )
