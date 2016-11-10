@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <time.h>
+#include <sys/time.h> 
 #include <stdio.h>
 #include <unistd.h>
 
@@ -10,8 +11,8 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "checkboard_navigation_module.h"
-#include <ros/ros.h>
-#include <std_msgs/Float32.h>
+//0//#include <ros/ros.h>
+//0//#include <std_msgs/Float32.h>
 #include "data_structure.hpp"
 
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -124,8 +125,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     static int count=0;
     static int i_hist=0;
     volatile bool * stop_flag = (bool*) stop_flag_ptr;
-    ros::NodeHandle n("chessboard_navigation");
-    ros::Publisher pub = n.advertise<std_msgs::Float32>("/IRIS/webcam_angle", 1);
+    //0//ros::NodeHandle n("chessboard_navigation");
+    //0//ros::Publisher pub = n.advertise<std_msgs::Float32>("/IRIS/webcam_angle", 1);
     float webcam_angle = 0;
     pos_chesspos.x = 0;
     pos_chesspos.y = 0;
@@ -298,16 +299,16 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         webcam_angle = 5;
                         long_turn = true;
                     }
-                    std_msgs::Float32 msg;
-                    msg.data = webcam_angle;
-                    pub.publish(msg);
+                    //0//std_msgs::Float32 msg;
+                    //0//msg.data = webcam_angle;
+                    //0//pub.publish(msg);
 
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
-		         << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
-			 << "webcam angle th " << webcam_angle
-			 << " delta " << delta << " vehicle " << vehicle_angle*180. / M_PI << endl;
+                         << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
+                         << "webcam angle th " << webcam_angle
+                         << " delta " << delta << " vehicle " << vehicle_angle*180. / M_PI << endl;
 
                     //while (lock);
                     //lock = 1;
@@ -340,9 +341,9 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     if (webcam_angle + delta_angle*sweep_dir > 360 || webcam_angle + delta_angle*sweep_dir < 0)
                         sweep_dir = -sweep_dir;
                     webcam_angle += delta_angle*sweep_dir;
-                    std_msgs::Float32 msg;
-                    msg.data = webcam_angle;
-                    pub.publish(msg);
+                    //0//std_msgs::Float32 msg;
+                    //0//msg.data = webcam_angle;
+                    //0//pub.publish(msg);
 
                     long int t = millis();
                     while (millis() - t < 600)
