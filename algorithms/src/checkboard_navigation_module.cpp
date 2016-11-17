@@ -299,9 +299,11 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         webcam_angle = 5;
                         long_turn = true;
                     }
-                    //0//std_msgs::Float32 msg;
-                    //0//msg.data = webcam_angle;
-                    //0//pub.publish(msg);
+                    FILE* file;
+                    file = fopen("/dev/ttyACM1","w");
+                    fprintf(file,"%d\n", (int)webcam_angle);
+                    printf("%d", webcam_angle);
+                    fclose(file);
 
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
 
@@ -338,12 +340,16 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
                     static const int delta_angle = 45;
 
-                    if (webcam_angle + delta_angle*sweep_dir > 360 || webcam_angle + delta_angle*sweep_dir < 0)
+                    if (webcam_angle + delta_angle*sweep_dir > 180 || webcam_angle + delta_angle*sweep_dir < 0)
                         sweep_dir = -sweep_dir;
                     webcam_angle += delta_angle*sweep_dir;
-                    //0//std_msgs::Float32 msg;
-                    //0//msg.data = webcam_angle;
-                    //0//pub.publish(msg);
+
+                    FILE* file;
+                    file = fopen("/dev/ttyACM1","w");
+                  //  fprintf(file,"%d", (int)webcam_angle);
+                    printf("%f", webcam_angle);
+                    fclose(file);
+
 
                     long int t = millis();
                     while (millis() - t < 600)
