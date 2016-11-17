@@ -12,12 +12,12 @@
 #include <vector> //for std::vector
 using namespace std;
 /**ROS**/
-#include "ros/ros.h"
-#include <ros/package.h>
-#include "sensor_msgs/PointCloud2.h"
+//#include "ros/ros.h"
+//#include <ros/package.h>
+//#include "sensor_msgs/PointCloud2.h"
 #include <sstream>
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_types.h>
+//#include <pcl_conversions/pcl_conversions.h>
+//#include <pcl/point_types.h>
 /**IRIS CODE**/
 #include "CoordSystemKinect.hpp"//Kinect Input
 #include "libfreenect.hpp"//Kinect Input
@@ -32,7 +32,7 @@ using namespace std;
 #include "checkboard_navigation_module.h"
 #include "debug_ip_server.h"
 
-
+#define ROS_INFO(a) printf("%s",a) 
 
 
 void* thread_display(void* arg);
@@ -221,17 +221,17 @@ bool  SerialConnect(serial::Serial & ser)
         }
         catch (serial::IOException& e)
         {
-                ROS_ERROR_STREAM("Unable to open port ");
+                //ROS_ERROR_STREAM("Unable to open port ");
                 ROS_INFO("Unable to open port ");
                 perror("Unable to open port ");
         }
 
         if (ser.isOpen()) {
-                ROS_INFO_STREAM("Serial Port initialized");
+                ROS_INFO("Serial Port initialized");
                 return true;
         }
         else {
-                ROS_ERROR_STREAM("Unable to open port ");
+                //ROS_ERROR_STREAM("Unable to open port ");
                 ROS_INFO("Unable to open port ");
                 perror("Unable to open port ");
         }
