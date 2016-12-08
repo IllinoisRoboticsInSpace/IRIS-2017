@@ -8,3 +8,4 @@ add_executable( checkboard_navigation main.cpp ../src/checkboard_navigation_modu
 target_link_libraries( checkboard_navigation ${OpenCV_LIBS} )
 include_directories( /usr/include/ )
 target_link_libraries (checkboard_navigation ${CMAKE_THREAD_LIBS_INIT})
+SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++0x" )

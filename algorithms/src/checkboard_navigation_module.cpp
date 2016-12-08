@@ -22,7 +22,7 @@
 using namespace cv;
 using namespace std;
 
-#include "claibinit_mod.h"
+//#include "claibinit_mod.h"
 
 double fmod2pi(double v)
 {
@@ -302,7 +302,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     FILE* file;
                     file = fopen("/dev/ttyACM1","w");
                     fprintf(file,"%d\n", (int)webcam_angle);
-                    printf("%d", webcam_angle);
+                    printf("%f", webcam_angle);
                     fclose(file);
 
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
