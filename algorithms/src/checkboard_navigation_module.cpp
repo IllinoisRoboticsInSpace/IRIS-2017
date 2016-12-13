@@ -22,7 +22,7 @@
 using namespace cv;
 using namespace std;
 
-#include "claibinit_mod.h"
+//#include "claibinit_mod.h"
 
 float lastDelta;
 
@@ -317,8 +317,6 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     }else{
                         cout<<"NO TERMINAL ON ACM0/ACM1";
                     }
-                    
-
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
@@ -365,7 +363,6 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         lastDelta = -lastDelta;
                     }
                     webcam_angle += delta_angle*sweep_dir;
-
                     FILE* file;
                     if(file = fopen("/dev/ttyACM0","w")){
                         fprintf(file,"%d", ((int)webcam_angle)%180);
