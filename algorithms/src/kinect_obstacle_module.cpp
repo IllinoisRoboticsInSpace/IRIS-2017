@@ -20,7 +20,7 @@ using namespace std;
 //#include <pcl/point_types.h>
 /**IRIS CODE**/
 #include "CoordSystemKinect.hpp"//Kinect Input
-#include "libfreenect.hpp"//Kinect Input
+#include <libfreenect.h>//Kinect Input
 #include "Linear.hpp"//Mat3
 #include "data_structure.hpp"
 /**OPENGL**/
@@ -28,9 +28,11 @@ using namespace std;
 #include <GL/gl.h>
 #include <GL/glu.h>*/
 // SERIAL
-#include <serial/serial.h>
+//#include <serial/serial.h>
 #include "checkboard_navigation_module.h"
 #include "debug_ip_server.h"
+#include "kinect_identification.h"
+#include <unistd.h>
 
 #define ROS_INFO(a) printf("%s",a) 
 
@@ -48,8 +50,8 @@ const int historicSizeY = 180;
 int sizeHTTPimage =0;
 const int sizeGradientMap = sizeof(int8_t)*((gradientHalfSizeX*2)+1)*((gradientHalfSizeY*2)+1);
 //csk namespace represents CoordinateSystemKinect
-const int sizeDepth = FREENECT_DEPTH_11BIT_SIZE;//we need this much space to represent the depth data
-const int sizeVideo = FREENECT_VIDEO_RGB_SIZE;//we need this much for the video data
+int sizeDepth = 0; //FREENECT_DEPTH_11BIT_SIZE;//we need this much space to represent the depth data
+int sizeVideo = 0; //FREENECT_VIDEO_RGB_SIZE;//we need this much for the video data
 /**ROS**/
 const string topicName = "iris_obstacles";//this is the name the listener will look for
 const string myNodeName = "iris_obstacles_talker";
@@ -82,57 +84,6 @@ freenect_context* f_ctx=0;
 freenect_device* f_dev;
 
 
-/**======================**/
-/**TELLS US THE STEEPNESS FACTOR OF A PIECE OF TERRAIN BY COMPARING THE HEIGHT OF ADJACENT PIECES**/
-/**======================**/
-template <typename T>
-int f_isSteep(T origin, T up, T left, T down, T right, T tolerance)//written by Max Archer 9/17/2014
-{
-    if(origin!=map_defaultValue)
-    {
-        if(up==map_defaultValue)
-            up = origin;
-        if(left==map_defaultValue)
-            left = origin;
-        if(down==map_defaultValue)
-            down = origin;
-        if(right==map_defaultValue)
-            right = origin;
-
-        if(up-origin >= tolerance || origin-up >= tolerance)
-            return map_occupied;
-        else if(left-origin >= tolerance || origin-left >= tolerance)
-            return map_occupied;
-        else if(down-origin >= tolerance || origin-down >= tolerance)
-            return map_occupied;
-        else if(right-origin >= tolerance || origin-right >= tolerance)
-            return map_occupied;
-    }
-    return map_unoccupied;
-}
-
-/**======================**/
-/**Uses the input map to produce a gradient of this map**/
-/**======================**/
-void makeGradient(MATRIX & output, const MATRIX& input, const float tolerance)//takes a map and gives it the gradient data
-{
-    
-    //const float tolerance = 0.5f;
-    for(int y = input.yllim()+1; y < input.yhlim()-1; ++y)
-    {
-        for(int x = input.xllim()+1; x < input.xhlim()-1; ++x)
-        {
-            if(input(x,y) != map_defaultValue)//get the point, and all points around it!
-                output(x,y) = f_isSteep(input(x  , y  ),
-                                        input(x  , y+1),
-                                        input(x  , y-1),
-                                        input(x-1, y  ),
-                                        input(x+1, y  ),
-                                        tolerance);
-        }
-    }
-}
-
 /**================================================================================**/
 /**DEPTH SENSOR CALLBACK**/
 /**================================================================================**/
@@ -143,6 +94,10 @@ void depth_cb(freenect_device* pDevice, void* v_depth, uint32_t timestamp)
     if(depth_used)
     {
         memcpy(pDepth, v_depth, sizeDepth);
+        printf("Got new Data \n");
+        for(int i=0; i<100; i++)
+			printf("%03d ",((char*)v_depth)[i]);
+		printf("/n");
         depth_used = false;
     }
     //if(depth_displayed)
@@ -170,73 +125,73 @@ float stof0(const string &a) {
         ss >> ans;
         return ans;
 }
-//////////////////////////////////////////////////////////////////////////////////////
-// SERIAL INTERPRETER FOR ROLL, PITCH AND YAW  //(Not currently used)
-//////////////////////////////////////////////////////////////////////////////////////
-Vec3f GetSerialGyro(serial::Serial & s)
-{
-        std::string buffer;
-        static std::string a[3],prev1,prev2,prev3;
-        static int message_count=0;
-        static Vec3f return_val;
-        while(s.available()>5)
-        {
-                s.readline(buffer,200,"\n");
-                if(buffer=="GO\n")
-                {
-                        if(message_count==4)
-                        {
-                                prev1=a[0];
-                                prev2=a[1];
-                                prev3=a[2];
-                                //ROS_INFO("Received IMU data");
-                        }
-                        message_count=0;                
-                }
-                if(message_count!=0 && message_count<4)
-                        a[message_count-1]=buffer;
-                buffer="";
-                message_count++;        
-        }
-        if(prev1!="" || prev2!="" || prev3!="" ) 
-        {
-                return_val=Vec3f(stof0(prev3)*M_PI/180,stof0(prev2)*M_PI/180,stof0(prev1)*M_PI/180);
-                //cout << return_val.z;
-        }
-        else
-                ROS_INFO("*** No IMU data in last loop");
-        return return_val;      
-}
+////////////////////////////////////////////////////////////////////////////////////////
+//// SERIAL INTERPRETER FOR ROLL, PITCH AND YAW  //(Not currently used)
+////////////////////////////////////////////////////////////////////////////////////////
+//Vec3f GetSerialGyro(serial::Serial & s)
+//{
+        //std::string buffer;
+        //static std::string a[3],prev1,prev2,prev3;
+        //static int message_count=0;
+        //static Vec3f return_val;
+        //while(s.available()>5)
+        //{
+                //s.readline(buffer,200,"\n");
+                //if(buffer=="GO\n")
+                //{
+                        //if(message_count==4)
+                        //{
+                                //prev1=a[0];
+                                //prev2=a[1];
+                                //prev3=a[2];
+                                ////ROS_INFO("Received IMU data");
+                        //}
+                        //message_count=0;                
+                //}
+                //if(message_count!=0 && message_count<4)
+                        //a[message_count-1]=buffer;
+                //buffer="";
+                //message_count++;        
+        //}
+        //if(prev1!="" || prev2!="" || prev3!="" ) 
+        //{
+                //return_val=Vec3f(stof0(prev3)*M_PI/180,stof0(prev2)*M_PI/180,stof0(prev1)*M_PI/180);
+                ////cout << return_val.z;
+        //}
+        //else
+                //ROS_INFO("*** No IMU data in last loop");
+        //return return_val;      
+//}
 
-// SERIAL INITIALIZATION
-bool  SerialConnect(serial::Serial & ser)
-{
-        try
-        {
-                ser.setPort("/dev/ttyACM0");
-                ser.setBaudrate(9600);//115200
-                serial::Timeout to = serial::Timeout::simpleTimeout(1);
-                ser.setTimeout(to);
-                ser.open();
-        }
-        catch (serial::IOException& e)
-        {
-                //ROS_ERROR_STREAM("Unable to open port ");
-                ROS_INFO("Unable to open port ");
-                perror("Unable to open port ");
-        }
+//// SERIAL INITIALIZATION
+//bool  SerialConnect(serial::Serial & ser)
+//{
+        //try
+        //{
+                //ser.setPort("/dev/ttyACM0");
+                //ser.setBaudrate(9600);//115200
+                //serial::Timeout to = serial::Timeout::simpleTimeout(1);
+                //ser.setTimeout(to);
+                //ser.open();
+        //}
+        //catch (serial::IOException& e)
+        //{
+                ////ROS_ERROR_STREAM("Unable to open port ");
+                //ROS_INFO("Unable to open port ");
+                //perror("Unable to open port ");
+        //}
 
-        if (ser.isOpen()) {
-                ROS_INFO("Serial Port initialized");
-                return true;
-        }
-        else {
-                //ROS_ERROR_STREAM("Unable to open port ");
-                ROS_INFO("Unable to open port ");
-                perror("Unable to open port ");
-        }
-        return false;
-}
+        //if (ser.isOpen()) {
+                //ROS_INFO("Serial Port initialized");
+                //return true;
+        //}
+        //else {
+                ////ROS_ERROR_STREAM("Unable to open port ");
+                //ROS_INFO("Unable to open port ");
+                //perror("Unable to open port ");
+        //}
+        //return false;
+//}
 
 /**================================================================================**/
 /**DEPTH PROCESS THREAD**/
@@ -309,7 +264,7 @@ void* thread_depth(void* arg)
             /**REMOVE STRANGE VALUES FROM MAP**/
             const float cellStepTolerance = 0.5;//fraction of a cells size that a cell
             //can change in height and will be marked as steep afterward
-            makeGradient(gradient, height, cellStepTolerance);//tolerance
+            obstacle_identification(gradient, height, cellStepTolerance);//tolerance
 
             int xPos=robot_pos.x/5; //position of the robot (true one)
             int yPos=robot_pos.y/5;
@@ -391,13 +346,27 @@ void* thread_kinect(void* arg)
 
     /**SETUP VIDEO**/
     //freenect_set_video_callback(f_dev, video_cb);
-    freenect_set_video_format(f_dev, FREENECT_VIDEO_RGB);
-    freenect_start_video(f_dev);//tell it to start reading rgb
+    //freenect_video_mode video_mode = freenect_find_video_mode( FREENECT_RESOLUTION_HIGH,FREENECT_VIDEO_RGB);
+
+    //sizeVideo = video_mode.bytes;
+    //pDepthFeed = static_cast<char*>(malloc(sizeVideo));//used to rgb display what the kinect sees
+    //pVideo = static_cast<char*>(malloc(sizeVideo));//each point needs 3 chars to represent the color there (r255,g255,b255)
+
+    //freenect_set_video_mode(f_dev, video_mode );
+    //freenect_start_video(f_dev);//tell it to start reading rgb
 
     /**SETUP DEPTH**/
     freenect_set_depth_callback(f_dev, depth_cb);//set the function that will be called for each depth call
-    freenect_set_depth_format(f_dev, FREENECT_DEPTH_11BIT);
+    freenect_frame_mode depth_mode=freenect_find_depth_mode( FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_11BIT);
+
+    sizeDepth = depth_mode.bytes;
+    pDepth = static_cast<uint16_t*>(malloc(sizeDepth));//each point is a uint16_t for depth
+    //pDepthDisplay = static_cast<uint16_t*>(malloc(sizeDepth));
+    
+    freenect_set_depth_mode(f_dev,depth_mode );
     freenect_start_depth(f_dev);//tell it to start reading depth
+
+
 
 
     while(!threads_stop_depth && !threads_stop && freenect_process_events(f_ctx) >= 0)/**this is primary loop for kinect stuff**/
@@ -430,10 +399,7 @@ void* init_kinect_mapping(void * stop_flag)
         /**===================================================**/
         /**ALL ABOUT INITIALIZING THE CONNECTION WITH KINECT!!**/
         /**===================================================**/
-        //pDepthDisplay = static_cast<uint16_t*>(malloc(sizeDepth));
-        //pDepthFeed = static_cast<char*>(malloc(sizeVideo));//used to rgb display what the kinect sees
-        pDepth = static_cast<uint16_t*>(malloc(sizeDepth));//each point is a uint16_t for depth
-        //pVideo = static_cast<char*>(malloc(sizeVideo));//each point needs 3 chars to represent the color there (r255,g255,b255)
+ 
 
         sizeHTTPimage = historicHalfSizeX * historicSizeY * 2 * 3;
         pMapHTTP = static_cast<unsigned char*>(malloc(sizeHTTPimage)); //http map buffer
@@ -451,7 +417,7 @@ void* init_kinect_mapping(void * stop_flag)
                         if (freenect_init(&f_ctx, NULL) < 0)
                         {
                                 cout << "Freenect_init() failed.(1)\n";
-                                return false;
+                                return 0;
                         }
                         freenect_set_log_level(f_ctx, FREENECT_LOG_DEBUG);
 
@@ -496,7 +462,7 @@ void* init_kinect_mapping(void * stop_flag)
                         if (kinect || map)
                         {
                                 cout << "KINECT PThread_create failed.(5)\n";
-                                return false;
+                                return 0;
                         }
 
                         while (!(*async_stop_flag))
