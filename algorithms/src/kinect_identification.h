@@ -4,7 +4,7 @@
 // IRIS at UIUC 2016 **/
 
 
-const float cellStepTolerance = 0.5;//fraction of a cells size that a cell
+const float cellStepTolerance = 1.5;//fraction of a cells size that a cell
 //can change in height and will be marked as steep afterward
 
 /**======================**/

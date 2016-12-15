@@ -12,7 +12,7 @@
 #include <memory.h>
 
 #if 1
-    #define ASSERT(x) if(!(x)) {std::cout<<"Error Assertion ##x\n";*((int*)(0))=0;}
+    #define ASSERT(x) if(!(x)) {std::cout<<"Error Assertion " #x "\n";*((int*)(0))=0;}
 #else
     #define ASSERT(x) 
 #endif
