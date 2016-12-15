@@ -7,5 +7,5 @@ add_executable( fullTest  ../src/kinect_obstacle_module.cpp ../src/checkboard_na
 #target_link_libraries( fullTest ~/Desktop/open_cv_checkboard/__old_test/opencv-master/build/lib/libopencv_calib3d.so -lopencv_calib3d )
 target_link_libraries( fullTest ${OpenCV_LIBS} )
 include_directories( /usr/include/ ../src/ )
-target_link_libraries (fullTest ${CMAKE_THREAD_LIBS_INIT} -lz -lfreenect)
+target_link_libraries (fullTest ${CMAKE_THREAD_LIBS_INIT})
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++0x" )

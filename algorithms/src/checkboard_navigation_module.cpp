@@ -24,6 +24,8 @@ using namespace std;
 
 //#include "claibinit_mod.h"
 
+float lastDelta;
+
 double fmod2pi(double v)
 {
     return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
@@ -136,7 +138,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     float depth = 6.03;    //CHANGE HERE THE SHAPE  OF SQUARES
     float squareSize =4.13;//CHANGE HERE THE SHAPE  OF SQUARES
 
-    int camera_id = 0;
+    int camera_id = 1;
     VideoCapture inputCapture;
     namedWindow("Image View");
 
@@ -286,6 +288,10 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
                     //rotate webcam!
                     float delta = c*180. / M_PI / 4.;
+                    if (delta!=0){
+                        lastDelta=delta;
+                        printf("THIS IS DELTA YO %f\n", lastDelta);
+                    }
                     if (abs(delta) > 1)
                         webcam_angle += delta;
                     bool long_turn = false;
@@ -299,12 +305,18 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         webcam_angle = 5;
                         long_turn = true;
                     }
-                  /*  FILE* file;
-                    file = fopen("/dev/ttyACM1","w");
-                    fprintf(file,"%d\n", (int)webcam_angle);
-                    printf("%f", webcam_angle);
-                    fclose(file);*/
-
+                    FILE* file;
+                    if(file = fopen("/dev/ttyACM0","w")){
+                        fprintf(file,"%d", ((int)webcam_angle)%180);
+                        printf("%d", webcam_angle);
+                        fclose(file);
+                    }else if(file = fopen("/dev/ttyACM1","w")){
+                        fprintf(file,"%d", ((int)webcam_angle)%180);
+                        printf("%d", webcam_angle);
+                        fclose(file);
+                    }else{
+                        cout<<"NO TERMINAL ON ACM0/ACM1";
+                    }
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
@@ -333,22 +345,36 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
             else
             {
                 count_lost++;
-                if (count_lost > 10)
+                if (count_lost > 3)
                 {
-                    cout << "WEBCAM: too long lost, doing 360s\n";
-                    static int sweep_dir = 1;
+                    static int sweep_dir;
+                    cout << "WEBCAM: too long lost, doing 180s\n";
+                    if (lastDelta!=0){
+                        sweep_dir = (int)(lastDelta/abs(lastDelta));
+                    }else{
+                        sweep_dir = 1;
+                    }
+                    printf("THIS IS DELTA YO %f\n", lastDelta);
 
-                    static const int delta_angle = 45;
+                    static const int delta_angle = 20;
 
-                    if (webcam_angle + delta_angle*sweep_dir > 180 || webcam_angle + delta_angle*sweep_dir < 0)
+                    if (webcam_angle + delta_angle*sweep_dir > 180 || webcam_angle + delta_angle*sweep_dir < 0){
                         sweep_dir = -sweep_dir;
+                        lastDelta = -lastDelta;
+                    }
                     webcam_angle += delta_angle*sweep_dir;
-
-                /*    FILE* file;
-                    file = fopen("/dev/ttyACM1","w");
-                  //  fprintf(file,"%d", (int)webcam_angle);
-                    printf("%f", webcam_angle);
-                    fclose(file);*/
+                    FILE* file;
+                    if(file = fopen("/dev/ttyACM0","w")){
+                        fprintf(file,"%d", ((int)webcam_angle)%180);
+                        printf("%d", webcam_angle);
+                        fclose(file);
+                    }else if(file = fopen("/dev/ttyACM1","w")){
+                        fprintf(file,"%d", ((int)webcam_angle)%180);
+                        printf("%d", webcam_angle);
+                        fclose(file);
+                    }else{
+                        cout<<"NO TERMINAL ON ACM0/ACM1";
+                    }
 
 
                     long int t = millis();

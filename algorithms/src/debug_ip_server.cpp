@@ -361,7 +361,7 @@ void *connection_handler(void * pointer)
             "Accept-Ranges: none\r\n"
             "Content-Length: ";
     write(sock , message , strlen(message));
-    sprintf(buffer,"%d", (int) output.length());
+    sprintf(buffer,"%d",output.length());
     write(sock , buffer , strlen(buffer));
     message = "\r\n"
             "Keep-Alive: Off\r\n"

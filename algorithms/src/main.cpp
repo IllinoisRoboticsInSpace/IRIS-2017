@@ -6,11 +6,11 @@
 #include <pthread.h>//pthreads
 #include <signal.h>
 
-//#include <ros/ros.h>
+#include <ros/ros.h>
 
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
-//#include <geometry_msgs/Pose2D.h>
+#include <geometry_msgs/Pose2D.h>
 
 using namespace std;
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     sigaction(SIGINT, &sigIntHandler, NULL);
 
     //ROS init
-    //ros::init(argc, argv, "IRIS_Navigation_and_planning", ros::init_options::NoSigintHandler);
+    ros::init(argc, argv, "IRIS_Navigation_and_planning", ros::init_options::NoSigintHandler);
 
     pthread_t chessboard_t;
     pthread_t navigation_t;
@@ -78,19 +78,19 @@ int main(int argc, char **argv)
     
 
     int chessboard = pthread_create(&chessboard_t, NULL, init_chessboard_navigation, (void*)&stop_flag);
-    int navigation = pthread_create(&navigation_t, NULL, init_kinect_mapping, (void*)&stop_flag);
+    int navigation = 0; // pthread_create(&navigation_t, NULL, init_kinect_mapping, (void*)&stop_flag);
     int path = pthread_create(&path_planning_t, NULL, path_planning, 0);
     int fsm = pthread_create(&fsm_t, NULL, FSM, 0);
     if(navigation || chessboard || path || fsm)
         exit(EXIT_FAILURE);
 
-    //ros::NodeHandle n("main_estimator");
+    ros::NodeHandle n("main_estimator");
     //ros::Subscriber sub = n.subscribe("/IRIS/theta_IMU", 1, got_theta_IMU);
     //ros::Subscriber sub = n.subscribe("/IRIS/target_pose", 1,got_target_pos);
     //ros::Publisher current_pos_pub pub = n.advertise<geometry_msgs::Pose2D>("/IRIS/current_pose", 1);
 
-    //ros::Rate r(50);
-    while (1) //(ros::ok())
+    ros::Rate r(50);
+    while (ros::ok())
     {
         //do the actual estimator
         //geometry_msgs::Pose2D current_pos;
@@ -98,9 +98,8 @@ int main(int argc, char **argv)
         //current_pos.y=D.true_pos_y;
         //current_pos.theta=D.true_theta;
         //current_pos_pub.publish(current_pos);
-        //ros::spinOnce();
-        //r.sleep();
-        sleep(1);
+        ros::spinOnce();
+        r.sleep();
     }
 
     stop_flag = true;
