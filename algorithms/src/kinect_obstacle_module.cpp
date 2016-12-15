@@ -201,6 +201,7 @@ void* thread_depth(void* arg)
     MATRIX historic(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
     MATRIX gradient(-gradientHalfSizeX,gradientHalfSizeX, -gradientHalfSizeY,gradientHalfSizeY);
     MATRIX height(-gradientHalfSizeX,gradientHalfSizeX, -gradientHalfSizeY,gradientHalfSizeY);
+    MATRIX temporary_matrix(-gradientHalfSizeX,gradientHalfSizeX, -gradientHalfSizeY,gradientHalfSizeY);
     D.map=&historic;
     D.local_map=&gradient;
     
@@ -262,9 +263,7 @@ void* thread_depth(void* arg)
                     height(pointCloud[i].x, pointCloud[i].y) = pointCloud[i].z;
             }
             /**REMOVE STRANGE VALUES FROM MAP**/
-            const float cellStepTolerance = 0.5;//fraction of a cells size that a cell
-            //can change in height and will be marked as steep afterward
-            obstacle_identification(gradient, height, cellStepTolerance);//tolerance
+            obstacle_identification(gradient, height, temporary_matrix);//tolerance
 
             int xPos=robot_pos.x/5; //position of the robot (true one)
             int yPos=robot_pos.y/5;
