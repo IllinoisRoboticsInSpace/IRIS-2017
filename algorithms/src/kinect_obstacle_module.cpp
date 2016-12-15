@@ -144,10 +144,10 @@ void depth_cb(freenect_device* pDevice, void* v_depth, uint32_t timestamp)
     if(depth_used)
     {
         memcpy(pDepth, v_depth, sizeDepth);
-        printf("Got new Data \n");
-        for(int i=0; i<100; i++)
-			printf("%03d ",((char*)v_depth)[i]);
-		printf("/n");
+        //printf("Got new Data \n");
+        //for(int i=0; i<100; i++)
+			//printf("%03d ",((char*)v_depth)[i]);
+		//printf("/n");
         depth_used = false;
     }
     //if(depth_displayed)
@@ -314,6 +314,19 @@ void* thread_depth(void* arg)
             /**REMOVE STRANGE VALUES FROM MAP**/
             const float cellStepTolerance = 0.5;//fraction of a cells size that a cell
             //can change in height and will be marked as steep afterward
+            
+				printf("HEIGHT:\n");
+                for(int x_i =-gradientHalfSizeX ; x_i < gradientHalfSizeX; x_i++)
+                {
+                    for( int y_i = -gradientHalfSizeY ; y_i < gradientHalfSizeY ; y_i++)
+                    {
+                        printf("%2.3f ", height(x_i,y_i));
+					}
+					printf("\n");
+				}
+				printf("-------- end\n\n\n\n\n\n\n\n\n");
+            
+            
             makeGradient(gradient, height, cellStepTolerance);//tolerance
 
             int xPos=robot_pos.x/5; //position of the robot (true one)
