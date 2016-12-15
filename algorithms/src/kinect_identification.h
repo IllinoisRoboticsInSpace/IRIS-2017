@@ -41,8 +41,8 @@ void getGradientMap(const MATRIX& height, MATRIX& gradient){
     int xMax = height.xhlim();
     int yMin = height.yllim();
     int yMax = height.yhlim();
-    for(int x=xMin;x<=xMax;x++){
-        for(int y=yMin;y<=yMax;y++){
+    for(int x=xMin;x<xMax;x++){
+        for(int y=yMin;y<yMax;y++){
             if (height(x, y)!=map_defaultValue){
                 float minGrad = 0;
                 for(int i=-1;i<=1;i++){
@@ -69,8 +69,8 @@ void blur(const MATRIX& source, MATRIX& output){
     int xMax = source.xhlim();
     int yMin = source.yllim();
     int yMax = source.yhlim();
-    for(int x=xMin;x<=xMax;x++){
-        for(int y=yMin;y<=yMax;y++){
+    for(int x=xMin;x<xMax;x++){
+        for(int y=yMin;y<yMax;y++){
             if(source(x,y)!=map_defaultValue){
                 float cell = 0;
                 float counter = 0;
@@ -100,8 +100,8 @@ void obstacle_identification(MATRIX & output, const MATRIX& input, MATRIX& tempo
     getGradientMap(input,output);
     blur(output,temporary_matrix);
     //const float tolerance = 0.5f;
-    for(int y = input.yllim()+1; y < input.yhlim()-1; ++y){
-        for(int x = input.xllim()+1; x < input.xhlim()-1; ++x){
+    for(int y = input.yllim(); y < input.yhlim(); ++y){
+        for(int x = input.xllim(); x < input.xhlim(); ++x){
            output(x,y) = temporary_matrix(x,y) == map_defaultValue ? map_defaultValue : temporary_matrix(x,y)>cellStepTolerance ? 1 : 0;
         }
     }
