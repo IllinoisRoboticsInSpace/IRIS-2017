@@ -7,8 +7,8 @@
 
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
-#include <ros/ros.h>
-#include "std_msgs/String.h"
+//#include <ros/ros.h>
+//#include "std_msgs/String.h"
 #include <sstream>
 
 using namespace std;
@@ -46,8 +46,8 @@ void* path_planning(void* unused)
 {
     //Initialize ROS node and publisher
     int count_loops=0;
-    ros::NodeHandle n;
-    ros::Publisher pub_control=n.advertise<std_msgs::String>("/IRIS/autonomous_command", 1);
+//    ros::NodeHandle n;
+//    ros::Publisher pub_control=n.advertise<std_msgs::String>("/IRIS/autonomous_command", 1);
     chesspos poss = {0,0,0,0};
     while(poss.millis==0) //wait for first location
         poss = get_chessboard_navigation_pos();
@@ -97,11 +97,11 @@ void* path_planning(void* unused)
             left=0;
         }
         //publish messages
-        std_msgs::String msg;
-        std::stringstream ss;
-        ss << left << "," << right << "," << bin_movement << "," << paddle_movement << "," << paddle_onoff ;
-        msg.data = ss.str();
-        pub_control.publish(msg);
+//        std_msgs::String msg;
+//        std::stringstream ss;
+//        ss << left << "," << right << "," << bin_movement << "," << paddle_movement << "," << paddle_onoff ;
+//        msg.data = ss.str();
+//        pub_control.publish(msg);
         
         usleep(50000);
         count_loops++;
