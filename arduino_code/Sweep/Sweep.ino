@@ -22,17 +22,18 @@ void setup()
 } 
 
 int get_angle(){
-  int ByteReceived;
-  while(Serial.available() == 0) {}
-  ByteReceived = Serial.read();
-  int angle = ByteReceived;
-  //Serial.print(ByteReceived);
-  //Serial.print(" | ");
-  Serial.print(angle);   
-  Serial.print("\n");      
-  //Serial.print(ByteReceived, HEX);
-  //Serial.print("    |   ");     
-  //Serial.print(char(ByteReceived));  
+  int angle = 0;
+  int readchars = 0;
+  unsigned char ByteReceived = 0;
+  while(!readchars){
+	  while(1){
+		while(!Serial.available());
+		ByteReceived = Serial.read();
+		if(ByteReceived<'0' || ByteReceved>'9') break;
+		readchars++;
+		angle=angle*10+ByteReceived-'0';
+	  }
+  }
   return angle;
 }
  
