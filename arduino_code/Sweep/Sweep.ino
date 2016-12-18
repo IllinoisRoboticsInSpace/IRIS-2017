@@ -29,11 +29,14 @@ int get_angle(){
 	  while(1){
 		while(!Serial.available());
 		ByteReceived = Serial.read();
-		if(ByteReceived<'0' || ByteReceved>'9') break;
+		if(ByteReceived<'0' || ByteReceived>'9') break;
 		readchars++;
 		angle=angle*10+ByteReceived-'0';
 	  }
   }
+  Serial.print("Recieved: ");
+  Serial.print(angle);
+  Serial.print("\n");
   return angle;
 }
  

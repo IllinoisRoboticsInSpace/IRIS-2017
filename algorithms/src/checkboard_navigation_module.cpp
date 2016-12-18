@@ -4,6 +4,7 @@
 #include <sys/time.h> 
 #include <stdio.h>
 #include <unistd.h>
+#include <string>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -22,7 +23,7 @@
 using namespace cv;
 using namespace std;
 
-//#include "claibinit_mod.h"
+#include "claibinit_mod.h"
 
 float lastDelta;
 
@@ -261,7 +262,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     //    cout << "Point " << it->x << " , " << it->y << endl;
                     //}
                     //cout << "a " << a/50 << " b " << b/50 << endl;
-                    a *= 2.226618/(80./77.5)/ view.cols;
+                    a *= 2.226618*0.6920/ view.cols;
                     b *= 2.226618 / view.cols;
                     c -= view.cols / 2;
                     c *= 2.226618 / view.cols;
@@ -287,7 +288,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     //cout << "dx " << dx << " dy " << dy << endl;
 
                     //rotate webcam!
-                    float delta = c*180. / M_PI / 4.;
+                    float delta = c*180. / M_PI / 3.;
                     if (delta!=0){
                         lastDelta=delta;
                         printf("THIS IS DELTA YO %f\n", lastDelta);
@@ -297,22 +298,31 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     bool long_turn = false;
                     if (webcam_angle < 0)
                     {
-                        webcam_angle = 355;
+                        webcam_angle = 175;
                         long_turn = true;
                     }
-                    if (webcam_angle > 360)
+                    if (webcam_angle > 180)
                     {
                         webcam_angle = 5;
                         long_turn = true;
                     }
                     FILE* file;
+                   // std::string s = std::to_string(((int)webcam_angle)%180);
+                    //char buffer[s.length()];
+                   // for (int i = 0; i < s.length(); i++)
+                   //    buffer[i] = s[i];
+
+                   // int adjusted180 = (int)webcam_angle;
+                  //  if (adjusted180 > 180)
+                  //      adjusted180 = 180 - ((int)webcam_angle%180);
                     if(file = fopen("/dev/ttyACM0","w")){
-                        fprintf(file,"%d", ((int)webcam_angle)%180);
-                        printf("%d", webcam_angle);
+                        fprintf(file, "%d\n", (int)webcam_angle);
+                        printf("Angle sent:%d\n", (int)webcam_angle);
                         fclose(file);
                     }else if(file = fopen("/dev/ttyACM1","w")){
-                        fprintf(file,"%d", ((int)webcam_angle)%180);
-                        printf("%d", webcam_angle);
+                        fprintf(file, "%d\n", (int)webcam_angle);
+                      //  fprintf(file,"%d", ((int)webcam_angle)%180);
+                        printf("Angle sent:%d\n", (int)webcam_angle);
                         fclose(file);
                     }else{
                         cout<<"NO TERMINAL ON ACM0/ACM1";
@@ -356,21 +366,26 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     }
                     printf("THIS IS DELTA YO %f\n", lastDelta);
 
-                    static const int delta_angle = 20;
+                    static const int delta_angle = 10;
 
                     if (webcam_angle + delta_angle*sweep_dir > 180 || webcam_angle + delta_angle*sweep_dir < 0){
                         sweep_dir = -sweep_dir;
                         lastDelta = -lastDelta;
                     }
                     webcam_angle += delta_angle*sweep_dir;
+                    
+                    
+                  //  int adjusted180 = (int)webcam_angle;
+                  //  if (adjusted180 > 180)
+                   //     adjusted180 = 180 - ((int)webcam_angle%180);
                     FILE* file;
                     if(file = fopen("/dev/ttyACM0","w")){
-                        fprintf(file,"%d", ((int)webcam_angle)%180);
-                        printf("%d", webcam_angle);
+                        fprintf(file, "%d\n", (int)webcam_angle);
+                        printf("Angle sent:%d\n", (int)webcam_angle);
                         fclose(file);
                     }else if(file = fopen("/dev/ttyACM1","w")){
-                        fprintf(file,"%d", ((int)webcam_angle)%180);
-                        printf("%d", webcam_angle);
+                        fprintf(file, "%d\n", (int)webcam_angle);
+                        printf("Angle sent:%d\n", (int)webcam_angle);
                         fclose(file);
                     }else{
                         cout<<"NO TERMINAL ON ACM0/ACM1";
@@ -378,7 +393,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
 
                     long int t = millis();
-                    while (millis() - t < 600)
+                    while (millis() - t < 300)
                          nextImage(inputCapture, view);
                     count_lost = 8;
                 }
