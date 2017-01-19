@@ -65,6 +65,8 @@
 #include <opencv2/core/internal.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <vector>
+#include <list>  
+#include <map>  
 
 #ifdef HAVE_TEGRA_OPTIMIZATION
 #include <opencv2/calib3d/calib3d_tegra.hpp>
@@ -1846,7 +1848,7 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
 
     if( !found )
     {
-        CvScalar color = {{0,0,255}};
+        CvScalar color(0,0,255);
         if( cn == 1 )
             color = cvScalarAll(200);
         color.val[0] *= scale;
@@ -1873,13 +1875,13 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
         const int line_max = 7;
         static const CvScalar line_colors[line_max] =
         {
-            {{0,0,255}},
-            {{0,128,255}},
-            {{0,200,200}},
-            {{0,255,0}},
-            {{200,200,0}},
-            {{255,0,0}},
-            {{255,0,255}}
+            CvScalar(0,0,255),
+            CvScalar(0,128,255),
+            CvScalar(0,200,200),
+            CvScalar(0,255,0),
+            CvScalar(200,200,0),
+            CvScalar(255,0,0),
+            CvScalar(255,0,255)
         };
 
         for( y = 0, i = 0; y < pattern_size.height; y++ )
