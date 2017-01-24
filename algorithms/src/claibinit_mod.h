@@ -1858,14 +1858,14 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
 
         for( i = 0; i < count; i++ )
         {
-            CvPoint pt;
+            /*CvPoint pt;
             pt.x = cvRound(corners[i].x*(1 << shift));
             pt.y = cvRound(corners[i].y*(1 << shift));
             cvLine( image, cvPoint( pt.x - r, pt.y - r ),
                     cvPoint( pt.x + r, pt.y + r ), color, 1, line_type, shift );
             cvLine( image, cvPoint( pt.x - r, pt.y + r),
                     cvPoint( pt.x + r, pt.y - r), color, 1, line_type, shift );
-            cvCircle( image, pt, r+(1<<shift), color, 1, line_type, shift );
+            cvCircle( image, pt, r+(1<<shift), color, 1, line_type, shift );*/
         }
     }
     else
@@ -1900,8 +1900,8 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
                 pt.x = cvRound(corners[i].x*(1 << shift));
                 pt.y = cvRound(corners[i].y*(1 << shift));
 
-                if( i != 0 )
-                    cvLine( image, prev_pt, pt, color, 1, line_type, shift );
+                /*if( i != 0 )
+                    cvLine( image, prev_pt, pt, color, 1, line_type, shift );*/
 
                 /*cvLine( image, cvPoint(pt.x - r, pt.y - r),
                         cvPoint(pt.x + r, pt.y + r), color, 1, line_type, shift );
