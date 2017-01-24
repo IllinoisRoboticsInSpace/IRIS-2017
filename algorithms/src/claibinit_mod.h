@@ -397,7 +397,7 @@ int cvFindChessboardCorners( const void* arr, CvSize pattern_size,
                 for (int k=0; k<4; k++)
                 {
                     CvPoint2D32f pt1, pt2;
-                    CvScalar color = CV_RGB(30,255,30);
+                    //CvScalar color = CV_RGB(30,255,30);
                     pt1 = quads[i].corners[k]->pt;
                     pt2 = quads[i].corners[(k+1)%4]->pt;
                     pt2.x = (pt1.x + pt2.x)/2;
@@ -452,7 +452,7 @@ int cvFindChessboardCorners( const void* arr, CvSize pattern_size,
                         for (int k=0; k<4; k++)
                         {
                             CvPoint2D32f pt1, pt2;
-                            CvScalar color = CV_RGB(30,255,30);
+                            //CvScalar color = CV_RGB(30,255,30);
                             if (quads[i].ordered)
                                 color = CV_RGB(255,30,30);
                             pt1 = quads[i].corners[k]->pt;
@@ -1848,7 +1848,7 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
 
     if( !found )
     {
-        CvScalar color(0,0,255);
+        //CvScalar color(0,0,255);
         if( cn == 1 )
             color = cvScalarAll(200);
         color.val[0] *= scale;
@@ -1873,7 +1873,7 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
         int x, y;
         CvPoint prev_pt = {0, 0};
         const int line_max = 7;
-        static const CvScalar line_colors[line_max] =
+        /*static const CvScalar line_colors[line_max] =
         {
             CvScalar(0,0,255),
             CvScalar(0,128,255),
@@ -1882,17 +1882,17 @@ cvDrawChessboardCorners( CvArr* _image, CvSize pattern_size,
             CvScalar(200,200,0),
             CvScalar(255,0,0),
             CvScalar(255,0,255)
-        };
+        };*/
 
         for( y = 0, i = 0; y < pattern_size.height; y++ )
         {
-            CvScalar color = line_colors[y % line_max];
+            /*CvScalar color = line_colors[y % line_max];
             if( cn == 1 )
                 color = cvScalarAll(200);
             color.val[0] *= scale;
             color.val[1] *= scale;
             color.val[2] *= scale;
-            color.val[3] *= scale;
+            color.val[3] *= scale;*/
 
             for( x = 0; x < pattern_size.width; x++, i++ )
             {
