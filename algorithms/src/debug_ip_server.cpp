@@ -351,6 +351,7 @@ void *connection_handler(void * pointer)
     data.append( (char *) data_buffer , length);
     
     *read_image=true;
+    std::cout<<"\033[0;31m"<<"IP SERVER image_read"<<"\033[0m\n";
     
     std::string output;
     

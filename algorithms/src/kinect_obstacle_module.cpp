@@ -259,8 +259,8 @@ void* thread_depth(void* arg)
             /**CONVERT POINT CLOUD INTO HEIGHT MAP**/
             for(int i = 0; i<pointCount; ++i)
             {
-                if(height(pointCloud[i].x, pointCloud[i].y) < pointCloud[i].z)
-                    height(pointCloud[i].x, pointCloud[i].y) = pointCloud[i].z;
+                if(height(-pointCloud[i].x, pointCloud[i].y) < pointCloud[i].z)
+                    height(-pointCloud[i].x, pointCloud[i].y) = pointCloud[i].z;
             }
             /**REMOVE STRANGE VALUES FROM MAP**/
 
@@ -338,6 +338,8 @@ void* thread_depth(void* arg)
                     }
                 }
                 tcpip_map_used = false;
+                std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
+
             }
             
         }
