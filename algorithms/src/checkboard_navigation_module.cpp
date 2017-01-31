@@ -143,6 +143,19 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     VideoCapture inputCapture;
     namedWindow("Image View");
 
+	FILE* file; // serial port
+	while(1){
+		if(file = fopen("/dev/ttyACM0","w")){
+			break;
+		}else if(file = fopen("/dev/ttyACM1","w")){
+			break;
+		}else{
+			cout<<"NO TERMINAL ON ACM0/ACM1";
+		}
+		sleep(10);
+	}
+
+
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
         cout << "Initializing webcam navigation with device " << camera_id << endl;
@@ -315,18 +328,9 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                    // int adjusted180 = (int)webcam_angle;
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
-                    if(file = fopen("/dev/ttyACM0","w")){
-                        fprintf(file, "%d\n", (int)webcam_angle);
-                        printf("Angle sent:%d\n", (int)webcam_angle);
-                        fclose(file);
-                    }else if(file = fopen("/dev/ttyACM1","w")){
-                        fprintf(file, "%d\n", (int)webcam_angle);
-                      //  fprintf(file,"%d", ((int)webcam_angle)%180);
-                        printf("Angle sent:%d\n", (int)webcam_angle);
-                        fclose(file);
-                    }else{
-                        cout<<"NO TERMINAL ON ACM0/ACM1";
-                    }
+                    fprintf(file, "%d\n", (int)webcam_angle);
+                    printf("Angle sent:%d\n", (int)webcam_angle);
+                    
                     double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
@@ -378,20 +382,9 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  int adjusted180 = (int)webcam_angle;
                   //  if (adjusted180 > 180)
                    //     adjusted180 = 180 - ((int)webcam_angle%180);
-                    FILE* file;
-                    if(file = fopen("/dev/ttyACM0","w")){
-                        fprintf(file, "%d\n", (int)webcam_angle);
-                        printf("Angle sent:%d\n", (int)webcam_angle);
-                        fclose(file);
-                    }else if(file = fopen("/dev/ttyACM1","w")){
-                        fprintf(file, "%d\n", (int)webcam_angle);
-                        printf("Angle sent:%d\n", (int)webcam_angle);
-                        fclose(file);
-                    }else{
-                        cout<<"NO TERMINAL ON ACM0/ACM1";
-                    }
-
-
+                    fprintf(file, "%d\n", (int)webcam_angle);
+                    printf("Angle sent:%d\n", (int)webcam_angle);
+                    
                     long int t = millis();
                     while (millis() - t < 300)
                          nextImage(inputCapture, view);
