@@ -70,13 +70,15 @@ void* path_planning(void* unused)
             }
             else
             {
-                forward_cntl = control_direction*sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y))*LINEAR_CONST;
-                if(control_direction>0)
-                    turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t))*ANGULAR_CONST;
-                else if(control_direction<0)
-                    turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t+M_PI))*ANGULAR_CONST;
-                else
-                    turning_cntl = 0.;
+                //HERE IS PATH PLANNING
+                pose2d start(pos.x,pos.y,M_PI);
+                //forward_cntl = control_direction*sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y))*LINEAR_CONST;
+                //if(control_direction>0)
+                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t))*ANGULAR_CONST;
+                //else if(control_direction<0)
+                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t+M_PI))*ANGULAR_CONST;
+                //else
+                    //turning_cntl = 0.;
             }
             
             //normalize and get right and left values
