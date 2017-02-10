@@ -17,6 +17,14 @@
     #define ASSERT(x) 
 #endif
 
+
+const float map_defaultValue = -9999.0f;//default value of map pieces, DO NOT REFERENCE THIS
+const float map_occupied = 1;
+const float map_unoccupied = 0;
+const float map_unknown = map_defaultValue;
+
+
+
 template<typename T> struct matrix_tag
 {
 public:
@@ -171,11 +179,6 @@ public:
 typedef matrix_tag<float> MATRIX;
 typedef matrix_tag<unsigned char> MAT_GRAYSCALE;
 typedef matrix_tag<unsigned char[3]> MAT_RGB;
-
-const float map_defaultValue = -9999.0f;//default value of map pieces, DO NOT REFERENCE THIS
-const float map_occupied = 1;
-const float map_unoccupied = 0;
-const float map_unknown = map_defaultValue;
 
 
 
