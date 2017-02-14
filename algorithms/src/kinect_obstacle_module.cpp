@@ -76,6 +76,7 @@ uint16_t* pDepth = NULL;
 //char* pDepthFeed = NULL;
 //uint16_t* pDepthDisplay = NULL;
 unsigned char* pMapHTTP = NULL;
+volatile MATRIX pathplan_map(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
 
 Vec3f downDirection(0,0,0);//static to prevent other files from seeing this
 
@@ -298,6 +299,11 @@ void* thread_depth(void* arg)
                 }
             }
             
+            if(pathplan_map_used)
+    				{
+        			memcpy(pathplan_map, historic, sizeof(historic));
+        			pathplan_map_used = false;
+        		}
             if(tcpip_map_used)
             {
                 for(int i=0; i<sizeHTTPimage; i+=3)

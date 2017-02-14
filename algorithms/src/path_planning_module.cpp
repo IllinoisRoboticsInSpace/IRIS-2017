@@ -21,6 +21,7 @@ const double ANGULAR_CONST = 1000/0.05;
 //Global variables
 volatile double goal_x;
 volatile double goal_y;
+extern volatile MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
 
@@ -60,8 +61,14 @@ void* path_planning(void* unused)
         double right;
         double left;
         
-        if(millis()-pos.millis<2500)
-        {
+        if(!pathplan_map_used)
+    		{
+        	memcpy(pMap, v_map, sizeMap);
+        	
+    
+        
+        //if(millis()-pos.millis<2500)
+        
             //Message setup
             if(control_direction==BACKWARDS)
             {
@@ -90,6 +97,7 @@ void* path_planning(void* unused)
             }
             right=forward_cntl-turning_cntl;
             left=forward_cntl+turning_cntl;
+            pathplan_map_used = true;
         }
         else
         {
