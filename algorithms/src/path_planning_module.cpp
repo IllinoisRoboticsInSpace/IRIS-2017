@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <math.h>
 
+
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
+#include "MapTransformer.hpp"
 //#include <ros/ros.h>
 //#include "std_msgs/String.h"
 #include <sstream>
@@ -21,6 +23,7 @@ const double ANGULAR_CONST = 1000/0.05;
 //Global variables
 volatile double goal_x;
 volatile double goal_y;
+extern volatile MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
 
@@ -30,6 +33,26 @@ volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
 
 
 volatile int control_direction=1;
+/**
+* Checks whether or not if the robot will collide if it is at x,y, and angle theta.
+* @return True if the robot will collide, false otherwise.
+*/
+bool collision_checker_f(double x, double y, double theta){
+    int robotCellHalfWidth = 10;
+    int robotCellHalfHeight = 10;
+    for (int robotX=-robotCellHalfWidth; x<=robotCellHalfWidth; ++x){
+        for (int robotY=-robotCellHalfWidth; y<=robotCellHalfWidth; ++y){
+            Vec2f point(x,y);
+            point = MapTransformer::rotate_point(point,theta);
+            point = MapTransformer::translate_point(point,x,y);
+            if (pathplan_map((int) x, (int)y)==map_occupied){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 //absolute value templated
 template<typename T> T absd(T d){return d<0?-d:d;}
@@ -60,8 +83,30 @@ void* path_planning(void* unused)
         double right;
         double left;
         
-        if(millis()-pos.millis<2500)
-        {
+        if(!pathplan_map_used) {
+    		
+
+            //Tells where the robot starts and ends at
+            pose2d start(pos.x, pos.y, pos.t);
+            pose2d end(goal_x, goal_y, 0); //change this later
+
+            //creates a random path generator, runs 500 iterations per round, avoiding obstacles
+            //check RRT.hpp to see how this function works
+            path p = RRT(path_planner_functions<collision_checker_f_prototype>(15, min_radius), start, end, 500, 0, true);
+
+            pose2d nextGoal;
+            //nextGoal is changed in the following function, passed by reference
+            if (p.get_position(10, nextGoal)) {
+                cout << "path exists!" << endl;
+            }
+            else {
+                cout << "error in the path" << endl;
+            }
+        	
+            
+            /*       
+             //if(millis()-pos.millis<2500)
+        
             //Message setup
             if(control_direction==BACKWARDS)
             {
@@ -70,14 +115,17 @@ void* path_planning(void* unused)
             }
             else
             {
-                forward_cntl = control_direction*sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y))*LINEAR_CONST;
-                if(control_direction>0)
-                    turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t))*ANGULAR_CONST;
-                else if(control_direction<0)
-                    turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t+M_PI))*ANGULAR_CONST;
-                else
-                    turning_cntl = 0.;
+                //HERE IS PATH PLANNING
+                pose2d start(pos.x,pos.y,M_PI);
+                //forward_cntl = control_direction*sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y))*LINEAR_CONST;
+                //if(control_direction>0)
+                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t))*ANGULAR_CONST;
+                //else if(control_direction<0)
+                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t+M_PI))*ANGULAR_CONST;
+                //else
+                    //turning_cntl = 0.;
             }
+          
             
             //normalize and get right and left values
             double normalizer=absd(turning_cntl)+absd(forward_cntl);
@@ -87,7 +135,8 @@ void* path_planning(void* unused)
                 forward_cntl/=normalizer/1000.;
             }
             right=forward_cntl-turning_cntl;
-            left=forward_cntl+turning_cntl;
+            left=forward_cntl+turning_cntl;*/
+            pathplan_map_used = true; 
         }
         else
         {
