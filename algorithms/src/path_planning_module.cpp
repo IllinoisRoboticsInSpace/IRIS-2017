@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <math.h>
 
+
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
+#include "MapTransformer.hpp"
 //#include <ros/ros.h>
 //#include "std_msgs/String.h"
 #include <sstream>
@@ -31,6 +33,26 @@ volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
 
 
 volatile int control_direction=1;
+/**
+* Checks whether or not if the robot will collide if it is at x,y, and angle theta.
+* @return True if the robot will collide, false otherwise.
+*/
+bool collision_checker_f(double x, double y, double theta){
+    int robotCellHalfWidth = 10;
+    int robotCellHalfHeight = 10;
+    for (int robotX=-robotCellHalfWidth; x<=robotCellHalfWidth; ++x){
+        for (int robotY=-robotCellHalfWidth; y<=robotCellHalfWidth; ++y){
+            Vec2f point(x,y);
+            point = MapTransformer::rotate_point(point,theta);
+            point = MapTransformer::translate_point(point,x,y);
+            if (pathplan_map((int) x, (int)y)==map_occupied){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 //absolute value templated
 template<typename T> T absd(T d){return d<0?-d:d;}
