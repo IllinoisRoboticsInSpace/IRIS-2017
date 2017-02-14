@@ -126,14 +126,27 @@ void *server_handler(void * pointer)
         
             pthread_t sniffer_thread;            
             
+            pthread_attr_t attr;
+            int s = pthread_attr_init(&attr);
+               //if (s != 0)
+                   //handle_error_en(s, "pthread_attr_init");
 
-            if( pthread_create( &sniffer_thread , NULL ,  connection_handler , 
+               s = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+               //i0f (s != 0)
+                   //handle_error_en(s, "pthread_attr_setdetachstate");
+
+            if( pthread_create( &sniffer_thread , &attr ,  connection_handler , 
                     (void*) (new data_connection(new_socket, data, length, width, height,0,read_image))) < 0)
             {
                 puts("debug_ip_server: could not create conn thread");
                 continue;
             }
+            pthread_attr_destroy(&attr);
             
+						puts("debug_ip_server: connection accepted and running ....................................");
+						
+					//	pthread_join(sniffer_thread);
+						//connection_handler((void*) (new data_connection(new_socket, data, length, width, height,0,read_image)));
             //forget socket
             new_socket=-1;
             
@@ -221,6 +234,7 @@ int deflate_string(const std::string & sin, std::string & sout, int level=Z_DEFA
  * */
 void *connection_handler(void * pointer)
 {
+    std::cout<<"\033[0;31m"<<"IP SERVER thread start"<<"\033[0m\n";
     data_connection & data_pointer= *(data_connection*)pointer;
     unsigned char * data_buffer=data_pointer.data;
     size_t length=data_pointer.length;
@@ -284,12 +298,15 @@ void *connection_handler(void * pointer)
                 "\r\n";
         write(sock , message , strlen(message));
         write(sock , html , strlen(html));
-        sleep(2);
+        sleep(0.02);
         shutdown(sock,SHUT_RDWR);
         close(sock);
         return 0;
     }
 
+
+    std::cout<<"\033[0;31m"<<"IP SERVER waiting image............"<<"\033[0m\n";
+		while(*read_image)sleep(.010);
 
     std::string data="BM";
     
@@ -351,7 +368,9 @@ void *connection_handler(void * pointer)
     data.append( (char *) data_buffer , length);
     
     *read_image=true;
-    
+static int cccount=0;
+    std::cout<<"\033[0;30m"<<"IP SERVER image_read"<<cccount<<"\033[0m\n";
+    cccount++;
     std::string output;
     
     deflate_string(data,output);
@@ -377,6 +396,7 @@ void *connection_handler(void * pointer)
     sleep(5);
     shutdown(sock,SHUT_RDWR);
     close(sock);
+		std::cout<<"\033[0;30m"<<"IP SERVER Goodbye"<<cccount<<"\033[0m\n";
 }
 
 

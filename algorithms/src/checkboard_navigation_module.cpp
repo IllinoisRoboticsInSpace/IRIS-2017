@@ -319,7 +319,6 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         webcam_angle = 5;
                         long_turn = true;
                     }
-                    FILE* file;
                    // std::string s = std::to_string(((int)webcam_angle)%180);
                     //char buffer[s.length()];
                    // for (int i = 0; i < s.length(); i++)
@@ -331,7 +330,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     fprintf(file, "%d\n", (int)webcam_angle);
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
-                    double vehicle_angle = fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI);
+                    double vehicle_angle = -fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI)-M_PI/2.;
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
                          << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
