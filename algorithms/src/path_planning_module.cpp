@@ -83,13 +83,29 @@ void* path_planning(void* unused)
         double right;
         double left;
         
-        if(!pathplan_map_used)
-    		{
-        	memcpy(pMap, v_map, sizeMap);
+        if(!pathplan_map_used) {
+    		
+
+            //Tells where the robot starts and ends at
+            pose2d start(pos.x, pos.y, pos.t);
+            pose2d end(goal_x, goal_y, 0); //change this later
+
+            //creates a random path generator, runs 500 iterations per round, avoiding obstacles
+            //check RRT.hpp to see how this function works
+            path p = RRT(path_planner_functions<collision_checker_f_prototype>(15, min_radius), start, end, 500, 0, true);
+
+            pose2d nextGoal;
+            //nextGoal is changed in the following function, passed by reference
+            if (p.get_position(10, nextGoal)) {
+                cout << "path exists!" << endl;
+            }
+            else {
+                cout << "error in the path" << endl;
+            }
         	
-    
-        
-        //if(millis()-pos.millis<2500)
+            
+            /*       
+             //if(millis()-pos.millis<2500)
         
             //Message setup
             if(control_direction==BACKWARDS)
@@ -109,6 +125,7 @@ void* path_planning(void* unused)
                 //else
                     //turning_cntl = 0.;
             }
+          
             
             //normalize and get right and left values
             double normalizer=absd(turning_cntl)+absd(forward_cntl);
@@ -118,8 +135,8 @@ void* path_planning(void* unused)
                 forward_cntl/=normalizer/1000.;
             }
             right=forward_cntl-turning_cntl;
-            left=forward_cntl+turning_cntl;
-            pathplan_map_used = true;
+            left=forward_cntl+turning_cntl;*/
+            pathplan_map_used = true; 
         }
         else
         {
