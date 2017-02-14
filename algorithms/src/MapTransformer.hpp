@@ -3,8 +3,8 @@
 #include "Linear.hpp"
 
 struct MapTransformer {
-    const float PI = 3.14159265;
-    Vec2f rotate_point(Vec2f p, float angle)
+    static const float PI = 3.14159265;
+    static Vec2f rotate_point(Vec2f p, float angle)
     {
         angle = angle * PI / 180.0;
         float s = sin(angle);
@@ -19,7 +19,7 @@ struct MapTransformer {
 
         return p;
     }
-    Vec2f translate_point(Vec2f p, int x, int y)
+    static Vec2f translate_point(Vec2f p, float x, float y)
     {
         p.x += x;
         p.y += y;
