@@ -6,7 +6,7 @@
 #include <unistd.h>    //write
 #include <pthread.h> //for threading , link with lpthread
 #include "data_structure.hpp"
-#include <string>;
+#include <string>
 
 /*
 We need to get in the habit of stating very clearly what each file's purpose is at the top of the file!
@@ -14,8 +14,8 @@ Unfortunately I don't know exactly what this file is for. Someone else will have
 
 */
 
-extern string positionsString;
-extern bool positionStringIsUsed;
+extern std::string positionsString;
+extern volatile bool positionStringIsUsed;
 
 struct data_connection
 {

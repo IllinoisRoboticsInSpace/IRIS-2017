@@ -9,13 +9,17 @@
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
 #include "MapTransformer.hpp"
+#include "RRT.hpp"
+#include "communication.hpp"
+
 //#include <ros/ros.h>
 //#include "std_msgs/String.h"
 #include <sstream>
 
 using namespace std;
 string positionsString;
-bool positionStringIsUsed = true;
+volatile bool positionStringIsUsed = true;
+extern volatile bool pathplan_map_used;
 
 //#define pow2(x) (x)*(x)
 
@@ -25,7 +29,7 @@ const double ANGULAR_CONST = 1000/0.05;
 //Global variables
 volatile double goal_x;
 volatile double goal_y;
-extern volatile MATRIX pathplan_map;
+extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
 
@@ -33,6 +37,8 @@ volatile int bin_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
 volatile int paddle_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
 volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
 
+//minimum path radious for RRT
+const double min_radius = 10;
 
 volatile int control_direction=1;
 /**
@@ -59,13 +65,15 @@ bool collision_checker_f(double x, double y, double theta){
 //absolute value templated
 template<typename T> T absd(T d){return d<0?-d:d;}
 //efficient square templated
-template<typename T> T pow2(T d){return d*d;}
+//template<typename T> T pow2(T d){return d*d;}
 //find distance in S(2pi) set (like a circle: through either side)
 template<typename T> T diff2pi(T d)
 {
     d=fmod2pi(d);
     return min(d,2*M_PI-d);
 }
+
+
 
 void* path_planning(void* unused)
 {
@@ -94,7 +102,7 @@ void* path_planning(void* unused)
 
             //creates a random path generator, runs 500 iterations per round, avoiding obstacles
             //check RRT.hpp to see how this function works
-            path p = RRT(path_planner_functions<collision_checker_f_prototype>(15, min_radius), start, end, 500, 0, true);
+            path p = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, true);
 
             pose2d nextGoal;
             //nextGoal is changed in the following function, passed by reference
@@ -104,8 +112,9 @@ void* path_planning(void* unused)
             else {
                 cout << "error in the path" << endl;
             }
+
+            pathplan_map_used = true;            
             
-            bool positionsRemaining = true;
             if (positionStringIsUsed) {
                 //This string stores the Json data for the path
                 positionsString = "{\"data\":[";
@@ -116,30 +125,27 @@ void* path_planning(void* unused)
                 //The distance in centimeters by which curveLength advances each time the following loop iterates
                 double step = 1.0;
                 
-                while (positionsRemaining) {
-                    pose2d currentPoint;
-                    positionsRemaining = get_position(curveLength, currentPoint);
-                    if (currentPoint) {
-                        string tempString = "[";
-                    
-                        string x = std::to_string(currentPoint.p.x);
-                        tempString += x;
-                        tempString += ","
-                        
-                        string y = std::to_string(currentPoint.p.y);
-                        tempString += y;
-                        tempString += ",";
-                        
-                        string theta = std::to_string(currentPoint.t);
-                        tempString += theta;
-                        tempString += "],";
-                        
-                        positionsString += tempString;
-                    }
-                    curveLength += step;
+                //while next position is valid
+                pose2d currentPoint;
+                while (p.get_position(curveLength, currentPoint)) {
+					// start line with comma only if not first item
+					positionsString += (curveLength==0.0?"[":",[");
+					// x
+					positionsString += std::to_string(currentPoint.p.x);
+					positionsString += ",";
+					// y
+					positionsString += std::to_string(currentPoint.p.y);
+					positionsString += ",";
+					// theta
+					positionsString += std::to_string(currentPoint.t);
+					positionsString += "]";
                 }
-                positionsString.pop_back();
-                positionsString += "]}"
+                
+                //finish string
+                positionsString += "]}";
+                
+                // this is the semaphore
+                //when false debug_ip_server is controlling positionsString
                 positionStringIsUsed = false;
             }
             
@@ -178,7 +184,7 @@ void* path_planning(void* unused)
             }
             right=forward_cntl-turning_cntl;
             left=forward_cntl+turning_cntl;*/
-            pathplan_map_used = true; 
+ 
         }
         else
         {
@@ -201,6 +207,11 @@ void* path_planning(void* unused)
             std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l "<< left << " r " << right <<"\033[0m\n";
         }
     }
+}
+
+locate_motor get_desired_motor()
+{
+	return locate_motor();
 }
 
 //Sets a goal to move to

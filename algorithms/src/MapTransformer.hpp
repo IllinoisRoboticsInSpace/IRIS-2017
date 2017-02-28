@@ -3,7 +3,7 @@
 #include "Linear.hpp"
 
 struct MapTransformer {
-    static const float PI = 3.14159265;
+    static constexpr float PI = 3.14159265;
     static Vec2f rotate_point(Vec2f p, float angle)
     {
         angle = angle * PI / 180.0;

@@ -65,6 +65,7 @@ volatile bool main_stop = false;
 volatile bool threads_stop = false;
 volatile int got_data_kinect = true;
 volatile bool threads_stop_depth = false;
+volatile bool pathplan_map_used = true;
 //we can't just use a mutex because the whole purpose is to not block!
 
 template<typename T> T pow2(T x){return x*x;}
@@ -76,7 +77,7 @@ uint16_t* pDepth = NULL;
 //char* pDepthFeed = NULL;
 //uint16_t* pDepthDisplay = NULL;
 unsigned char* pMapHTTP = NULL;
-volatile MATRIX pathplan_map(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
+MATRIX pathplan_map(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
 
 Vec3f downDirection(0,0,0);//static to prevent other files from seeing this
 
@@ -301,7 +302,7 @@ void* thread_depth(void* arg)
             
             if(pathplan_map_used)
     				{
-        			memcpy(pathplan_map, historic, sizeof(historic));
+        			pathplan_map=historic;
         			pathplan_map_used = false;
         		}
             if(tcpip_map_used)
