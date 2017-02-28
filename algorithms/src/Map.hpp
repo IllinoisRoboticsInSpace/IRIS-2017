@@ -94,6 +94,14 @@ public:
     {
         return -dy+ny;
     }
+    bool validIndex(int ax,int ay)
+    {
+        int kx=ax+dx;int ky=ay+dy;
+        return((kx<nx)
+        && (ky<ny)
+        && (kx>=0)
+        && (ky>=0));
+	}
 #if 1
     T & operator() (int ax,int ay)
     {

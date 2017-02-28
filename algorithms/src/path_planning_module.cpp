@@ -53,7 +53,7 @@ bool collision_checker_f(double x, double y, double theta){
             Vec2f point(robotX,robotY);
             point = MapTransformer::rotate_point(point,theta);
             point = MapTransformer::translate_point(point,x,y);
-            if (pathplan_map((int) point.x, (int) point.y)==map_occupied){
+            if (pathplan_map.validIndex((int) point.x, (int) point.y) && pathplan_map((int) point.x, (int) point.y)==map_occupied){
                 return true;
             }
         }
