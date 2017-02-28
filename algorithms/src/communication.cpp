@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 //#include "checkboard_navigation_module.h"
 //#include "data_structure.hpp"
 //#include <ros/ros.h>
