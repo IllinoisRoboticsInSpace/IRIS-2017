@@ -16,7 +16,7 @@
 
 using namespace std;
 
-char * motor_port="/dev/ttyACM0";
+const char * motor_port="/dev/ttyACM0";
 
 void* communication(void * unused)
 {
@@ -31,7 +31,7 @@ void* communication(void * unused)
     {
         locate_motor desired = get_desired_motor();
         char c[100];
-        sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right)
+        sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
         write(file, c, strlen(c));
 
 
