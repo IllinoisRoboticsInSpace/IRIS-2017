@@ -107,10 +107,10 @@ void* path_planning(void* unused)
             pose2d nextGoal;
             //nextGoal is changed in the following function, passed by reference
             if (p.get_position(10, nextGoal)) {
-                cout << "path exists!" << endl;
+                std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
             }
             else {
-                cout << "error in the path" << endl;
+                std::cout<<"\033[0;32m"<< "PATHPLAN: **************** error in the path ******************* [0m\n";
             }
 
             pathplan_map_used = true;            
