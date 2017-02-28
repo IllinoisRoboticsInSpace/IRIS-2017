@@ -6,6 +6,7 @@
 #include <unistd.h>    //write
 #include <pthread.h> //for threading , link with lpthread
 #include "data_structure.hpp"
+#include <string>;
 
 /*
 We need to get in the habit of stating very clearly what each file's purpose is at the top of the file!
@@ -432,7 +433,7 @@ void *connection_handler(void * pointer)
     sleep(5);
     shutdown(sock,SHUT_RDWR);
     close(sock);
-		std::cout<<"\033[0;30m"<<"IP SERVER Goodbye"<<cccount<<"\033[0m\n";
+		std::cout<<"\033[0;30m"<<"IP SERVER Goodbye"<<"\033[0m\n";
 	
 	
 	

@@ -138,7 +138,7 @@ void* path_planning(void* unused)
                     }
                     curveLength += step;
                 }
-                
+                positionsString.pop_back();
                 positionsString += "]}"
                 positionStringIsUsed = false;
             }
