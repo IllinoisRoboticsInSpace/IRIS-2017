@@ -25,6 +25,7 @@ extern volatile bool pathplan_map_used;
 
 const double LINEAR_CONST = 1000/2.;
 const double ANGULAR_CONST = 1000/0.05;
+const double CURVE_JSON_STEP = 10;
 
 //Global variables
 volatile double goal_x=0.;
@@ -84,6 +85,9 @@ void* path_planning(void* unused)
     chesspos poss = {0,0,0,0};
     while(poss.millis==0) //wait for first location
         poss = get_chessboard_navigation_pos();
+    
+    std::cout<<"\033[0;32m"<< "PATHPLAN: got first position!"<<"\033[0m\n";
+    
     while(1)
     {
         double forward_cntl;
@@ -110,7 +114,7 @@ void* path_planning(void* unused)
                 std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
             }
             else {
-                std::cout<<"\033[32;0m"<< "PATHPLAN: **************** error in the path *******************"<<"\033[0m\n";
+                std::cout<<"\033[0;42m"<< "PATHPLAN: **************** error in the path *******************"<<"\033[0m\n";
             }
 
             pathplan_map_used = true;            
@@ -139,6 +143,8 @@ void* path_planning(void* unused)
 					// theta
 					positionsString += std::to_string(currentPoint.t);
 					positionsString += "]";
+					// advance in curve length
+					curveLength+=CURVE_JSON_STEP;
                 }
                 
                 //finish string
