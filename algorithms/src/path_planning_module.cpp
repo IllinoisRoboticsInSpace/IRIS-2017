@@ -27,8 +27,8 @@ const double LINEAR_CONST = 1000/2.;
 const double ANGULAR_CONST = 1000/0.05;
 
 //Global variables
-volatile double goal_x;
-volatile double goal_y;
+volatile double goal_x=0.;
+volatile double goal_y=0.;
 extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
