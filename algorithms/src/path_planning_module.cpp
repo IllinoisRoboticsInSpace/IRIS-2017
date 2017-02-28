@@ -43,7 +43,7 @@ const double min_radius = 10;
 volatile int control_direction=1;
 /**
 * Checks whether or not if the robot will collide if it is at x,y, and angle theta.
-* @return True if the robot will collide, false otherwise.
+* @return false if the robot will collide, true otherwise.
 */
 bool collision_checker_f(double x, double y, double theta){
     int robotCellHalfWidth = 10;
@@ -54,11 +54,11 @@ bool collision_checker_f(double x, double y, double theta){
             point = MapTransformer::rotate_point(point,theta);
             point = MapTransformer::translate_point(point,x,y);
             if (pathplan_map.validIndex((int) point.x, (int) point.y) && pathplan_map((int) point.x, (int) point.y)==map_occupied){
-                return true;
+                return false;
             }
         }
     }
-    return false;
+    return true;
 }
 
 
