@@ -110,7 +110,7 @@ void* path_planning(void* unused)
                 std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
             }
             else {
-                std::cout<<"\033[0;32m"<< "PATHPLAN: **************** error in the path ******************* [0m\n";
+                std::cout<<"\033[32;0m"<< "PATHPLAN: **************** error in the path *******************"<<"\033[0m\n";
             }
 
             pathplan_map_used = true;            
