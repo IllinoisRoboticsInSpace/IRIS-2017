@@ -14,6 +14,8 @@
 #include <sstream>
 
 using namespace std;
+string positionsString;
+bool positionStringIsUsed = true;
 
 //#define pow2(x) (x)*(x)
 
@@ -102,7 +104,47 @@ void* path_planning(void* unused)
             else {
                 cout << "error in the path" << endl;
             }
-        	
+            
+            bool positionsRemaining = true;
+            if (positionStringIsUsed) {
+                //This string stores the Json data for the path
+                positionsString = "{\"data\":[";
+                
+                //The length along the curve
+                double curveLength = 0.0;
+                
+                //The distance in centimeters by which curveLength advances each time the following loop iterates
+                double step = 1.0;
+                
+                while (positionsRemaining) {
+                    pose2d currentPoint;
+                    positionsRemaining = get_position(curveLength, currentPoint);
+                    if (currentPoint) {
+                        string tempString = "[";
+                    
+                        string x = std::to_string(currentPoint.p.x);
+                        tempString += x;
+                        tempString += ","
+                        
+                        string y = std::to_string(currentPoint.p.y);
+                        tempString += y;
+                        tempString += ",";
+                        
+                        string theta = std::to_string(currentPoint.t);
+                        tempString += theta;
+                        tempString += "],";
+                        
+                        positionsString += tempString;
+                    }
+                    curveLength += step;
+                }
+                
+                positionsString += "]}"
+                positionStringIsUsed = false;
+            }
+            
+            
+            
             
             /*       
              //if(millis()-pos.millis<2500)
