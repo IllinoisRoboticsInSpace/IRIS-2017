@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const char * motor_port="/dev/ttyACM0";
+char * motor_port=(char*)"/dev/ttyACM0";
 
 void* communication(void * unused)
 {
