@@ -27,10 +27,10 @@ using namespace std;
 
 float lastDelta;
 
-double fmod2pi(double v)
-{
-    return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
-}
+//double fmod2pi(double v)
+//{
+    //return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
+//}
 
 long int millis()
 {

@@ -6,7 +6,16 @@
 #include <unistd.h>    //write
 #include <pthread.h> //for threading , link with lpthread
 #include "data_structure.hpp"
+#include <string>
 
+/*
+We need to get in the habit of stating very clearly what each file's purpose is at the top of the file!
+Unfortunately I don't know exactly what this file is for. Someone else will have to do it for this one.
+
+*/
+
+extern std::string positionsString;
+extern volatile bool positionStringIsUsed;
 
 struct data_connection
 {
@@ -275,7 +284,128 @@ void *connection_handler(void * pointer)
         return 0;
     }
     
-    if(code!='?')
+    if (code == 'J') 
+    {
+        while (positionStringIsUsed)
+        {
+            sleep(0.1);
+        }
+        const char * html = positionsString.c_str();
+        message = "HTTP/1.1 200 OK\r\n"
+                "Accept-Ranges: none\r\n"
+                "Content-Length: ";
+        write(sock , message , strlen(message));
+        sprintf(buffer,"%d",(int)strlen(html));
+        write(sock , buffer , strlen(buffer));
+        message = "\r\n"
+                "Keep-Alive: Off\r\n"
+                "Connection: Close\r\n"
+                "Content-Type: text/html\r\n"
+                "Pragma: no-cache, no-store\r\n"
+                "Cache-Control: no-cache, no-store\r\n"
+                "\r\n";
+        write(sock , message , strlen(message));
+        write(sock , html , strlen(html));
+        
+        positionStringIsUsed = true;
+    }
+    
+    
+    
+    else if (code == '?') 
+    {
+        std::cout<<"\033[0;31m"<<"IP SERVER waiting image............"<<"\033[0m\n";
+		    while(*read_image)sleep(.010);
+
+        std::string data="BM";
+        
+        
+        // file size
+        write_uint32_t(data , total_size );
+
+        // reserved field (in hex. 00 00 00 00)
+        write_uint32_t(data , 0);
+
+        // offset of pixel data inside the image
+        write_uint32_t(data , 54);
+        
+        // -- BITMAP HEADER -- //
+
+        // header size
+        write_uint32_t(data , 40 );
+
+        // width of the image
+        write_uint32_t(data , width );
+
+        // height of the image
+        write_uint32_t(data , height );
+
+        // reserved field
+        buffer[0] = 1;
+        buffer[1] = 0;
+
+        // number of bits per pixel
+        buffer[2] = 24; // 3 byte
+        buffer[3] = 0;
+        data.append( buffer , 4);
+        
+        // compression method (no compression here)
+        write_uint32_t(data , 0 );
+
+        // size of pixel data
+        write_uint32_t(data , bitmap_size );
+
+        // horizontal resolution of the image - pixels per meter (2835)
+        buffer[0] = 0;
+        buffer[1] = 0;
+        buffer[2] = 0b00110000;
+        buffer[3] = 0b10110001;
+
+        // vertical resolution of the image - pixels per meter (2835)
+        buffer[4] = 0;
+        buffer[5] = 0;
+        buffer[6] = 0b00110000;
+        buffer[7] = 0b10110001;
+        data.append(  buffer , 8);
+
+        // color pallette information
+        write_uint32_t(data , 0 );
+
+        // number of important colors
+        write_uint32_t(data , 0 );
+        
+        data.append( (char *) data_buffer , length);
+        
+        *read_image=true;
+        
+    static int cccount=0;
+        std::cout<<"\033[0;30m"<<"IP SERVER image_read"<<cccount<<"\033[0m\n";
+        cccount++;
+        std::string output;
+        
+        deflate_string(data,output);
+        
+        //Reply to the client
+        message = "HTTP/1.1 200 OK\r\n"
+                "Accept-Ranges: none\r\n"
+                "Content-Length: ";
+        write(sock , message , strlen(message));
+        sprintf(buffer,"%d", (int)output.length());
+        write(sock , buffer , strlen(buffer));
+        message = "\r\n"
+                "Keep-Alive: Off\r\n"
+                "Connection: Close\r\n"
+                "Content-Type: image/bmp\r\n"
+                "Content-Encoding: deflate\r\n"
+                "Pragma: no-cache\r\n"
+                "Cache-Control: no-cache\r\n"
+                "Refresh: 0.5;url=?\r\n"
+                "\r\n";    
+        write(sock , message , strlen(message));
+        write(sock , output.c_str() , output.length());
+    }
+    
+    else
     {
         const char * html=
         "<!DOCTYPE html><html><body><h2>IRIS navigation and collision detection</h2>"
@@ -298,105 +428,15 @@ void *connection_handler(void * pointer)
                 "\r\n";
         write(sock , message , strlen(message));
         write(sock , html , strlen(html));
-        sleep(0.02);
-        shutdown(sock,SHUT_RDWR);
-        close(sock);
-        return 0;
     }
-
-
-    std::cout<<"\033[0;31m"<<"IP SERVER waiting image............"<<"\033[0m\n";
-		while(*read_image)sleep(.010);
-
-    std::string data="BM";
     
-    
-    // file size
-    write_uint32_t(data , total_size );
-
-    // reserved field (in hex. 00 00 00 00)
-    write_uint32_t(data , 0);
-
-    // offset of pixel data inside the image
-    write_uint32_t(data , 54);
-    
-    // -- BITMAP HEADER -- //
-
-    // header size
-    write_uint32_t(data , 40 );
-
-    // width of the image
-    write_uint32_t(data , width );
-
-    // height of the image
-    write_uint32_t(data , height );
-
-    // reserved field
-    buffer[0] = 1;
-    buffer[1] = 0;
-
-    // number of bits per pixel
-    buffer[2] = 24; // 3 byte
-    buffer[3] = 0;
-    data.append( buffer , 4);
-    
-    // compression method (no compression here)
-    write_uint32_t(data , 0 );
-
-    // size of pixel data
-    write_uint32_t(data , bitmap_size );
-
-    // horizontal resolution of the image - pixels per meter (2835)
-    buffer[0] = 0;
-    buffer[1] = 0;
-    buffer[2] = 0b00110000;
-    buffer[3] = 0b10110001;
-
-    // vertical resolution of the image - pixels per meter (2835)
-    buffer[4] = 0;
-    buffer[5] = 0;
-    buffer[6] = 0b00110000;
-    buffer[7] = 0b10110001;
-    data.append(  buffer , 8);
-
-    // color pallette information
-    write_uint32_t(data , 0 );
-
-    // number of important colors
-    write_uint32_t(data , 0 );
-    
-    data.append( (char *) data_buffer , length);
-    
-    *read_image=true;
-static int cccount=0;
-    std::cout<<"\033[0;30m"<<"IP SERVER image_read"<<cccount<<"\033[0m\n";
-    cccount++;
-    std::string output;
-    
-    deflate_string(data,output);
-    
-    //Reply to the client
-    message = "HTTP/1.1 200 OK\r\n"
-            "Accept-Ranges: none\r\n"
-            "Content-Length: ";
-    write(sock , message , strlen(message));
-    sprintf(buffer,"%d", (int)output.length());
-    write(sock , buffer , strlen(buffer));
-    message = "\r\n"
-            "Keep-Alive: Off\r\n"
-            "Connection: Close\r\n"
-            "Content-Type: image/bmp\r\n"
-            "Content-Encoding: deflate\r\n"
-            "Pragma: no-cache\r\n"
-            "Cache-Control: no-cache\r\n"
-            "Refresh: 0.5;url=?\r\n"
-            "\r\n";    
-    write(sock , message , strlen(message));
-    write(sock , output.c_str() , output.length());
     sleep(5);
     shutdown(sock,SHUT_RDWR);
     close(sock);
-		std::cout<<"\033[0;30m"<<"IP SERVER Goodbye"<<cccount<<"\033[0m\n";
+		std::cout<<"\033[0;30m"<<"IP SERVER Goodbye"<<"\033[0m\n";
+	
+	
+	
 }
 
 
