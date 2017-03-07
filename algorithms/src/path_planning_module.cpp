@@ -26,6 +26,10 @@ extern volatile bool pathplan_map_used;
 const double LINEAR_CONST = 1000/2.;
 const double ANGULAR_CONST = 1000/0.05;
 const double CURVE_JSON_STEP = 10;
+const double POINT1_CURVE_LENGTH = 4;
+const double POINT2_CURVE_LENGTH = 8;
+const double F_FORWARD_CONTROL = 500;
+const double K_TURN_CONTROL = 180;
 
 //Global variables
 volatile double goal_x=0.;
@@ -102,7 +106,7 @@ void* path_planning(void* unused)
 
             //Tells where the robot starts and ends at
             pose2d start(pos.x, pos.y, pos.t);
-            pose2d end(goal_x, goal_y, 0); //change this later
+            pose2d end(goal_x, goal_y, pos.t); //change this later
 
             //creates a random path generator, runs 500 iterations per round, avoiding obstacles
             //check RRT.hpp to see how this function works
@@ -157,29 +161,22 @@ void* path_planning(void* unused)
             
             
             
-            
-            /*       
-             //if(millis()-pos.millis<2500)
-        
-            //Message setup
-            if(control_direction==BACKWARDS)
+            pose2d point1,point2;
+            if(millis()-pos.millis<2500 
+                && p.get_position(POINT1_CURVE_LENGTH, point1) 
+                && p.get_position(POINT2_CURVE_LENGTH, point2))
             {
-                forward_cntl=-1000;
-                turning_cntl = 0.;
+            
+                double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
+                
+                turning_cntl=K_TURN_CONTROL*theta;
+                forward_cntl=F_FORWARD_CONTROL;
             }
             else
             {
-                //HERE IS PATH PLANNING
-                pose2d start(pos.x,pos.y,M_PI);
-                //forward_cntl = control_direction*sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y))*LINEAR_CONST;
-                //if(control_direction>0)
-                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t))*ANGULAR_CONST;
-                //else if(control_direction<0)
-                    //turning_cntl = diff2pi(fmod2pi(atan2(goal_y - pos.y, goal_x - pos.x)) - fmod2pi(pos.t+M_PI))*ANGULAR_CONST;
-                //else
-                    //turning_cntl = 0.;
+                turning_cntl=0;
+                forward_cntl=0;
             }
-          
             
             //normalize and get right and left values
             double normalizer=absd(turning_cntl)+absd(forward_cntl);
@@ -188,8 +185,8 @@ void* path_planning(void* unused)
                 turning_cntl/=normalizer/1000.;
                 forward_cntl/=normalizer/1000.;
             }
-            right=forward_cntl-turning_cntl;
-            left=forward_cntl+turning_cntl;*/
+            right=forward_cntl+turning_cntl;
+            left=forward_cntl-turning_cntl;
  
         }
         else
