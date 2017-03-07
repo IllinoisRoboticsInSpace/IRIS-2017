@@ -78,7 +78,7 @@ template<typename T> T diff2pi(T d)
     return min(d,2*M_PI-d);
 }
 
-
+locate_motor desired_motor_action;
 
 void* path_planning(void* unused)
 {
@@ -98,8 +98,6 @@ void* path_planning(void* unused)
         double turning_cntl;
         //Get robot position
         chesspos pos = get_chessboard_navigation_pos();
-        double right;
-        double left;
         
         if(!pathplan_map_used) {
     		
@@ -174,6 +172,7 @@ void* path_planning(void* unused)
             }
             else
             {
+				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<"\033[0m\n";
                 turning_cntl=0;
                 forward_cntl=0;
             }
@@ -185,25 +184,16 @@ void* path_planning(void* unused)
                 turning_cntl/=normalizer/1000.;
                 forward_cntl/=normalizer/1000.;
             }
-            right=forward_cntl+turning_cntl;
-            left=forward_cntl-turning_cntl;
+            desired_motor_action.motor_right=forward_cntl+turning_cntl;
+            desired_motor_action.motor_left=forward_cntl-turning_cntl;
  
         }
         else
         {
-            if((count_loops%20)==1)
-                std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<"\033[0m\n";
-            right=0;
-            left=0;
+            desired_motor_action.motor_right=0;
+            desired_motor_action.motor_left=0;
         }
-        //publish messages
-//        std_msgs::String msg;
-//        std::stringstream ss;
-//        ss << left << "," << right << "," << bin_movement << "," << paddle_movement << "," << paddle_onoff ;
-//        msg.data = ss.str();
-//        pub_control.publish(msg);
         
-        usleep(50000);
         count_loops++;
         if((count_loops%20)==1)
         {
@@ -214,7 +204,7 @@ void* path_planning(void* unused)
 
 locate_motor get_desired_motor()
 {
-	return locate_motor();
+	return desired_motor_action;
 }
 
 //Sets a goal to move to
