@@ -12,9 +12,9 @@ var svgns = "http://www.w3.org/2000/svg"
 // shape.setAttributeNS(null, "fill", "green");
 function myFunction() {
 	t=t+0.2;
-    document.getElementById("map").innerHTML = "<div>CANCER</div>";
+    document.getElementById("map").innerHTML = "<div>TEST</div>";
     temp = document.getElementById("line").innerHTML;
-    document.getElementById("line").innerHTML = temp + "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='200px' height='200px'><line x1='0' y1='0' x2='" + "5000" + "'y2='5000' style='stroke:rgb(0,0,255);stroke-width:2' />Sorry, your browser does not support inline SVG.</svg>";
+    document.getElementById("line").innerHTML = temp + "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='200px' height='200px'><line x1='-100' y1='-100' x2='" + "5000" + "'y2='5000' style='stroke:rgb(0,0,255);stroke-width:2' />Sorry, your browser does not support inline SVG.</svg>";
     if(i==15){
     	i=0;
     	 document.getElementById("line").innerHTML = ''
