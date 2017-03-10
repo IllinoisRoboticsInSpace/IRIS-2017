@@ -14,9 +14,14 @@
 
 #include "joystick.hh"
 #include <unistd.h>
+#include <crono>
+#include <cmath>
+using namespace std;
+using namespace std::chrono;
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
+
 
 int main(int argc, char** argv)
 {
@@ -31,7 +36,7 @@ int main(int argc, char** argv)
   }
 
   int last_left=0, last_right=0, uncapped=0;
-  
+  auto start = high_resolution_clock::now();
   while (true)
   {
     // Restrict rate
@@ -59,6 +64,12 @@ int main(int argc, char** argv)
 			last_right=max(-1000.,min(1000.,-abb/(uncapped?25:50)));
       }
     }
-    printf("!G 1 %d_!G 2 %d_\n",last_left,last_right);
+   auto curr = high_resolution_clock::now();
+   auto diff = curr-start;
+
+   if(diff>=milliseconds(50)){
+   printf("!G 1 %d_!G 2 %d_\n",last_left,last_right);
+   start= curr;
+}
   }
 }
