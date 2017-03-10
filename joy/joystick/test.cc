@@ -14,7 +14,7 @@
 
 #include "joystick.hh"
 #include <unistd.h>
-#include <crono>
+#include <chrono>
 #include <cmath>
 using namespace std;
 using namespace std::chrono;
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
    auto diff = curr-start;
 
    if(diff>=milliseconds(50)){
-   printf("!G 1 %d_!G 2 %d_\n",last_left,last_right);
+   printf("!G 1 %d_!G 2 %d_\n",last_left,-last_right);
    start= curr;
 }
   }
