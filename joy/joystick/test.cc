@@ -69,6 +69,7 @@ int main(int argc, char** argv)
 
    if(diff>=milliseconds(50)){
    printf("!G 1 %d_!G 2 %d_\n",last_left,-last_right);
+   fflush(stdout);
    start= curr;
 }
   }
