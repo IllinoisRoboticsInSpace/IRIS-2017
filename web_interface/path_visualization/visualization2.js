@@ -67,7 +67,6 @@ function setupPathElements() {
 //Updates the path with new data
 function updatePath(data, svg) {
 	//Scale values
-	console.log("data:", data);
 	scaledData = scaleData(data, height, width);
 
 	//Set the path element
@@ -93,14 +92,12 @@ function updateConnection(svgElement) {
 			updatePath(JSON.parse(rawData).data, svgElement);
 		});
 
-		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + ")";
-
-		//Force reload of image
-		//val = Math.floor(Math.random()*2) + 1;
-		//document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + val.toString() + ")";
+		var time = new Date();
+		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + time.getTime() + ")";
+		//document.getElementById("obstacle-plot").src = OBS_URL;
 	}
 	catch(err) {
-		alert("Failed to connect to the server.");
+		console.log("Failed to connect to the server.");
 	}
 }
 
