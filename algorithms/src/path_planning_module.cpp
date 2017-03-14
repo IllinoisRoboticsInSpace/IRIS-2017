@@ -103,7 +103,7 @@ void* path_planning(void* unused)
     		
 
             //Tells where the robot starts and ends at
-            pose2d start(pos.x, pos.y, pos.t);
+            pose2d start(pos.x/5., pos.y/5., pos.t);
             pose2d end(goal_x, goal_y, pos.t); //change this later
 
             //creates a random path generator, runs 500 iterations per round, avoiding obstacles
