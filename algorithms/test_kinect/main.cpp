@@ -15,6 +15,9 @@
 #include "data_structure.hpp"
 //#include <geometry_msgs/Pose2D.h>
 
+volatile bool positionStringIsUsed = true;
+volatile bool pathplan_map_used;
+
 using namespace std;
 
 long int millis()
