@@ -71,11 +71,14 @@ function updatePath(data, svg) {
 
 	//Set the path element
 	var path = d3.path();
-	path.moveTo(scaledData[0][0], scaledData[0][1]);
 
-	for (var i = 1; i < scaledData.length; i++) {
-		path.lineTo(scaledData[i][0], scaledData[i][1]);
-	};
+	if(scaledData.length != 0) {
+		path.moveTo(scaledData[0][0], scaledData[0][1]);
+
+		for (var i = 1; i < scaledData.length; i++) {
+			path.lineTo(scaledData[i][0], scaledData[i][1]);
+		};
+	}
 
 	//Transition the data that needs to change
 	d3.select("path").transition()
@@ -94,9 +97,9 @@ function updateConnection(svgElement) {
 
 		var time = new Date();
 		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + time.getTime() + ")";
-		//document.getElementById("obstacle-plot").src = OBS_URL;
 	}
 	catch(err) {
+
 		console.log("Failed to connect to the server.");
 	}
 }
