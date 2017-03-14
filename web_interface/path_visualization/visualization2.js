@@ -1,8 +1,8 @@
 //Arena dimensions
-const X_MIN = -147;
-const X_MAX = 147;
+const X_MIN = -80;
+const X_MAX = 80;
 const Y_MIN = 0;
-const Y_MAX = 738;
+const Y_MAX = 180;
 
 //SVG options
 const PATH_COLOR = "#e02828";
@@ -24,15 +24,15 @@ function scaleData(unscaledData, height, width) {
 	//Create the scalers with computed min/max values
 	var x = d3.scaleLinear()
 			  .domain([X_MIN, X_MAX])
-			  .range([0, height]);
+			  .range([0, width]);
 
 	var y = d3.scaleLinear()
 			  .domain([Y_MIN, Y_MAX])
-			  .range([0, width]);
+			  .range([0, height]);
 
 	//Scale the data
 	for (var i = 0; i < unscaledData.length; i++) {
-		scaledData.push([y(unscaledData[i][1]), x(unscaledData[i][0])]);
+		scaledData.push([x(unscaledData[i][0]), y(unscaledData[i][1])]);
 	};
 
 	return scaledData;
@@ -67,6 +67,7 @@ function setupPathElements() {
 //Updates the path with new data
 function updatePath(data, svg) {
 	//Scale values
+	console.log("data:", data);
 	scaledData = scaleData(data, height, width);
 
 	//Set the path element
@@ -86,29 +87,17 @@ function updatePath(data, svg) {
 //////////////////////////////////////////////////
 
 function updateConnection(svgElement) {
-	var path_url1 = "http://127.0.0.1:8000/J1.json";
-	var path_url2 = "http://127.0.0.1:8000/J2.json";
-	var url1 = "http://127.0.0.1:8000/iris_path_img.png";
-	var url2 = "http://127.0.0.1:8000/iris_path_test.png";
-	var url = "http://127.0.0.1:8000/iris_path_img.png";
-
-	if(Math.floor(Math.random()*2) + 1 == 1) {
-		path_url = path_url1;
-		url = url1;
-	}
-	else {
-		path_url = path_url2;
-		url = url2;
-	}
-
 	try {
 		console.log("Fetching data from the server...")
 		parsedData = $.get(PATH_URL, function(rawData) {
-			console.log(rawData)
-			updatePath(rawData.data, svgElement);
+			updatePath(JSON.parse(rawData).data, svgElement);
 		});
 
 		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + ")";
+
+		//Force reload of image
+		//val = Math.floor(Math.random()*2) + 1;
+		//document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + val.toString() + ")";
 	}
 	catch(err) {
 		alert("Failed to connect to the server.");
@@ -120,8 +109,10 @@ function updateConnection(svgElement) {
 //Initialize data and graph upon loading the page
 window.onload = function() {
 	//Set the height and width variables
-	width = document.getElementById("navigation-plot").clientWidth - 40;
-	height = document.getElementById("navigation-plot").clientHeight - 40;
+	width = 160*3;
+	height = 180*3;
+	//width = document.getElementById("navigation-plot").clientWidth - 40;
+	//height = document.getElementById("navigation-plot").clientHeight - 40;
 
 	//Get the SVG element for later updating
 	var svgElement = setupPathElements();

@@ -27,8 +27,8 @@ body {
 .col-10 {
     background-repeat: no-repeat;
     background-origin: content-box;
-    background-position: center;
-    background-size: 100% 100%;
+    background-position: top left;
+    background-size: 480px 540px;
     height: 100vh;
 	width: 80%;
 	float: right;
@@ -57,14 +57,4 @@ body {
 .button-refresh:hover {
     background-color: white; 
     color: black; 
-}
-
-#path-image {
-	/*transform: rotate(-90deg);*/
-	position: inherit;
-	z-index: -1;
-	height: 100%;
-	width: auto;
-	top: 0px;
-
 }
