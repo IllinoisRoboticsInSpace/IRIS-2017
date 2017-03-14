@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
+
+		<title>IRIS 7 Navigation Visualization</title>
+
+		<!-- Load D3 scripts for visualization -->
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+
+		<!-- Load visualization script to draw the navigation plot -->
+		<script src="visualization2.js" ></script>
+
+		<!-- Load CSS script for styling -->
+		<link href="visualization2.css" rel="stylesheet">
+	</head>
+
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+
+				<!-- Sidebar -->
+				<nav class="col-2 sidebar" id="nav-settings">
+					<button class="button button-refresh" id="refresh-connection">Refresh Connection</button>
+					<hr>
+
+					<!-- TODO: Add more features such as toggle an option for using the orientation, etc. -->
+					<div style="text-align:center">
+						<p><i>Overlay previous paths to see evolution</i></p>
+					</div>
+					<input type="radio" name="overlay-paths" checked> Most Recent Path<br>
+					<input type="radio" name="overlay-paths"> Last 5 Recent Paths<br>
+					<input type="radio" name="overlay-paths"> All Previous Paths
+					<hr>
+				</nav>
+
+				<!-- Main content -->
+				<div class="col-10" id="navigation-plot"></div>
+			</div>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	</body>
+</html>
