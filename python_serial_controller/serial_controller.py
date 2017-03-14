@@ -103,7 +103,7 @@ def start_tcp_server(callback, port = 8000):
             
             # Bind the socket to the port
             print >>sys.stderr, 'tcp_server: starting up on %s:%s' % (socket.gethostname(),port)
-            sock.bind((socket.gethostname(), port))
+            sock.bind(('', port))
 
             # Listen for incoming connections
             sock.listen(1)
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     parser.add_argument("-p","--tcpport",help="tcp port to listen to",default=8000,type=int)
     parser.add_argument("-M","--maxon",help="maxon serial port configuration",action='store_true',default=True,dest='maxon')
     parser.add_argument("-m","--nomaxon",help="use standard serial port configuration",action='store_false',default=True,dest='maxon')
-    parser.add_argument("-e","--error",help="pattern to send through serial port on error (requires no -m)",default="!G 1 0_!G 1 0_")
+    parser.add_argument("-e","--error",help="pattern to send through serial port on error (requires no -m)",default="!G 1 0_!G 2 0_")
     args=parser.parse_args()
     print args
     serial_connect.baudrate=args.baudrate
