@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -16,7 +17,7 @@
 //#include <geometry_msgs/Pose2D.h>
 
 volatile bool positionStringIsUsed = true;
-volatile bool pathplan_map_used;
+volatile std::string positionsString;
 
 using namespace std;
 
