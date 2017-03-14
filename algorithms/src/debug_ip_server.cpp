@@ -293,6 +293,7 @@ void *connection_handler(void * pointer)
         const char * html = positionsString.c_str();
         message = "HTTP/1.1 200 OK\r\n"
                 "Accept-Ranges: none\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
                 "Content-Length: ";
         write(sock , message , strlen(message));
         sprintf(buffer,"%d",(int)strlen(html));
