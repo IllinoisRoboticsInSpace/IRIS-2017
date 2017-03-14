@@ -169,7 +169,9 @@ def callback(data):
                 print >>sys.stderr, '******** EXCEPTION: reset_input_buffer'
         return '' #new connection
     if data==-1: #error - send safe command
-        return callback(serial_connect.err_str)
+        ret = callback(serial_connect.err_str)
+        callback(-5)
+        return ret
     try: #just send stuff
         if data==0: #get serial data
             data = callback.serial.read(1024)
