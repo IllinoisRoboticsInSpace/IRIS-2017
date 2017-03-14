@@ -128,6 +128,7 @@ def start_tcp_server(callback, port = 8000):
                         connection.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                     except AttributeError:
                         pass # XXX not available on windows
+                    callback(-5) #new incomming connection
                     connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                     connection_handler(connection,callback)
                     print >>sys.stderr, 'connection_handler: no more data from', client_address
@@ -156,8 +157,17 @@ def start_tcp_server(callback, port = 8000):
         callback(-1)
 
 def callback(data):
-    if data==-2:
-        return #nothing is to be done
+    if data==-2:#nothing is to be done
+        return '' #nothing is to be done
+    if data==-5:#clear input queue
+        try:
+            callback.serial.flushInput() #clear input queue
+        except:
+            try:
+                callback.serial.reset_input_buffer() #clear input queue
+            except:
+                print >>sys.stderr, '******** EXCEPTION: reset_input_buffer'
+        return '' #new connection
     if data==-1: #error - send safe command
         return callback(serial_connect.err_str)
     try: #just send stuff
@@ -220,7 +230,7 @@ if __name__ == '__main__':
     if not args.ignore_error:
         serial_connect.err_str=args.error+"\n"
     else:
-        serial_connect.err_str=-1
+        serial_connect.err_str=-2
     callback.serial=serial_connect(None)
     while True:
         try:
