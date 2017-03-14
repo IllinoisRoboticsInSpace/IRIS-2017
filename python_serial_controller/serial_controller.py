@@ -156,6 +156,8 @@ def start_tcp_server(callback, port = 8000):
         callback(-1)
 
 def callback(data):
+    if data==-2:
+        return #nothing is to be done
     if data==-1: #error - send safe command
         return callback(serial_connect.err_str)
     try: #just send stuff
@@ -206,18 +208,19 @@ if __name__ == '__main__':
     parser.add_argument("-p","--tcpport",help="tcp port to listen to",default=8000,type=int)
     parser.add_argument("-M","--maxon",help="maxon serial port configuration",action='store_true',default=True,dest='maxon')
     parser.add_argument("-m","--nomaxon",help="use standard serial port configuration",action='store_false',default=True,dest='maxon')
-    parser.add_argument("-e","--error",help="pattern to send through serial port on error (requires no -m)",default="!G 1 0_!G 2 0_")
+    parser.add_argument("-e","--error",help="pattern to send through serial port on error",default="!G 1 0_!G 2 0_")
+    parser.add_argument("-n","--ignore_error",help="do not send any pattern through serial port on error",action='store_true',default=False)
     args=parser.parse_args()
-    print args
+    #print args
     serial_connect.baudrate=args.baudrate
     serial_connect.ports=args.serialport
     if not serial_connect.ports:
-        serial_connect.ports=["/dev/ttyACM0","/dev/ttyACM1","/dev/ttyACM2","/dev/ttyACM3","/dev/ttyUSB0","/dev/ttyUSB1"]
+        serial_connect.ports=["/dev/ttyACM0","/dev/ttyACM1","/dev/ttyACM2","/dev/ttyACM3","/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2"]
     serial_connect.maxon=args.maxon
-    if serial_connect.maxon:
+    if not args.ignore_error:
         serial_connect.err_str=args.error+"\n"
     else:
-        serial_connect.err_str=""
+        serial_connect.err_str=-1
     callback.serial=serial_connect(None)
     while True:
         try:
