@@ -26,7 +26,7 @@ def connection_handler(connection,callback):
                 #process data
                 connection.sendall(callback(data))
             else:
-                break
+                raise Exception('Connection lost')
         except socket.error as e:
             if(e.errno==errno.EWOULDBLOCK):
                 time.sleep(0.01)
@@ -128,8 +128,8 @@ def start_tcp_server(callback, port = 8000):
                         connection.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                     except AttributeError:
                         pass # XXX not available on windows
-                    callback(-5) #new incomming connection
                     connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                    callback(-5) #new incomming connection
                     connection_handler(connection,callback)
                     print >>sys.stderr, 'connection_handler: no more data from', client_address
                 except:
