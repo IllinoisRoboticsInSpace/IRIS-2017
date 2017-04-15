@@ -25,7 +25,7 @@ extern volatile bool pathplan_map_used;
 
 const double LINEAR_CONST = 1000/2.;
 const double ANGULAR_CONST = 1000/0.05;
-const double CURVE_JSON_STEP = 10;
+const double CURVE_JSON_STEP = 1;
 const double POINT1_CURVE_LENGTH = 4;
 const double POINT2_CURVE_LENGTH = 8;
 const double F_FORWARD_CONTROL = 500;
@@ -103,12 +103,12 @@ void* path_planning(void* unused)
     		
 
             //Tells where the robot starts and ends at
-            pose2d start(pos.x/5., pos.y/5., pos.t);
-            pose2d end(goal_x, goal_y, pos.t); //change this later
+            pose2d start(pos.x/5., pos.y/5., pos.t+M_PI);
+            pose2d end(goal_x/5., goal_y/5., pos.t); //change this later
 
             //creates a random path generator, runs 500 iterations per round, avoiding obstacles
             //check RRT.hpp to see how this function works
-            path p = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, true);
+            path p = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
 
             pose2d nextGoal;
             //nextGoal is changed in the following function, passed by reference
@@ -187,6 +187,8 @@ void* path_planning(void* unused)
             desired_motor_action.motor_right=forward_cntl+turning_cntl;
             desired_motor_action.motor_left=forward_cntl-turning_cntl;
  
+            std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l "<< left << " r " << right <<"\033[0m\n";
+ 
         }
         else
         {
@@ -195,10 +197,6 @@ void* path_planning(void* unused)
         }
         
         count_loops++;
-        if((count_loops%20)==1)
-        {
-            std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l "<< left << " r " << right <<"\033[0m\n";
-        }
     }
 }
 

@@ -5,13 +5,17 @@
 #include <unistd.h>
 #include <pthread.h>//pthreads
 #include <signal.h>
+#include <math.h>
 
 #include "../src/checkboard_navigation_module.h"
 #include "../src/data_structure.hpp"
 
 using namespace std;
 
-
+double fmod2pi(double v)
+{
+    return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
+}
 
 //Control C handler
 void my_handler(int s) {

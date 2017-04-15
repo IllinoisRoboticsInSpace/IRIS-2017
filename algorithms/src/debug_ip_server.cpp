@@ -303,7 +303,7 @@ void *connection_handler(void * pointer)
                 "Connection: Close\r\n"
                 "Content-Type: text/html\r\n"
                 "Pragma: no-cache, no-store\r\n"
-                "Cache-Control: no-cache, no-store\r\n"
+                "Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\n"
                 "\r\n";
         write(sock , message , strlen(message));
         write(sock , html , strlen(html));

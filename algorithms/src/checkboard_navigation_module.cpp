@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include <fcntl.h>   /* File control definitions */
+#include <errno.h>   /* Error number definitions */
+#include <termios.h> /* POSIX terminal control definitions */
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -143,18 +146,18 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     VideoCapture inputCapture;
     namedWindow("Image View");
 
-	FILE* file; // serial port
+	int file; // serial port
 	while(1){
-		if(file = fopen("/dev/ttyACM0","w")){
+		if((file = open("/dev/ttyACM0", O_RDWR )) != -1){
 			break;
-		}else if(file = fopen("/dev/ttyACM1","w")){
+		}else if((file = open("/dev/ttyACM0", O_RDWR )) != -1){
 			break;
 		}else{
 			cout<<"NO TERMINAL ON ACM0/ACM1";
 		}
 		sleep(10);
 	}
-
+	 fcntl(file, F_SETFL, 0);
 
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
@@ -327,7 +330,9 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                    // int adjusted180 = (int)webcam_angle;
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
-                    fprintf(file, "%d\n", (int)webcam_angle);
+                    char c_temp[100];
+                    sprintf(c_temp, "%d\n", (int)webcam_angle);
+                    write(file,c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
                     double vehicle_angle = -fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI)-M_PI/2.;
@@ -381,7 +386,9 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  int adjusted180 = (int)webcam_angle;
                   //  if (adjusted180 > 180)
                    //     adjusted180 = 180 - ((int)webcam_angle%180);
-                    fprintf(file, "%d\n", (int)webcam_angle);
+                    char c_temp[100];
+                    sprintf(c_temp, "%d\n", (int)webcam_angle);
+                    write(file,c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
                     long int t = millis();
