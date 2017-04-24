@@ -390,7 +390,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                    //     adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
                     sprintf(c_temp, "%d\n", (int)webcam_angle);
-                    write(file,c_temp,strlen(c_temp));
+                    file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
                     long int t = millis();
