@@ -150,7 +150,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     
     
 	SerialStream file; // serial port
-	file.SetBaudRage(BAUD_9600);
+	file.SetBaudRage(SerialStreamBuf::BAUD_9600);
 	while(1){
 	    file.Open("/dev/ttyACM0");
 	    if (file.IsOpen()) {
