@@ -26,6 +26,7 @@
 
 using namespace cv;
 using namespace std;
+using namespace LibSerial;
 
 #include "claibinit_mod.h"
 
