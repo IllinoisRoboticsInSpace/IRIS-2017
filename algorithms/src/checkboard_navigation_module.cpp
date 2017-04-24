@@ -145,19 +145,21 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     int camera_id = 1;
     VideoCapture inputCapture;
     namedWindow("Image View");
-
-	int file; // serial port
+    
+    
+	SerialStream file; // serial port
 	while(1){
-		if((file = open("/dev/ttyACM0", O_RDWR )) != -1){
-			break;
-		}else if((file = open("/dev/ttyACM0", O_RDWR )) != -1){
-			break;
-		}else{
-			cout<<"NO TERMINAL ON ACM0/ACM1";
-		}
+	    file.Open("/dev/ttyACM0",O_RWDR);
+	    if (file.IsOpen()) {
+	        break;
+	    }
+	    else {
+	        cout << "NO TERMINAL ON ACM0/ACM1";
+	    }
 		sleep(10);
 	}
-	 fcntl(file, F_SETFL, 0);
+	
+	fcntl(file, F_SETFL, 0);
 
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
