@@ -96,6 +96,9 @@ function updateConnection(svgElement) {
 		});
 
 		var time = new Date();
+		background = $.get(OBS_URL, function(data) {
+			console.log(data);
+		});
 		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + time.getTime() + ")";
 	}
 	catch(err) {
