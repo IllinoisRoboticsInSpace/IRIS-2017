@@ -150,7 +150,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     
 	SerialStream file; // serial port
 	while(1){
-	    file.Open("/dev/ttyACM0",O_RWDR);
+	    file.Open("/dev/ttyACM0");
 	    if (file.IsOpen()) {
 	        break;
 	    }
