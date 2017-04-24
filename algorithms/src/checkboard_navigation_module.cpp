@@ -8,6 +8,7 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include <SerialStream.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -158,8 +159,6 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 	    }
 		sleep(10);
 	}
-	
-	fcntl(file, F_SETFL, 0);
 
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
@@ -334,7 +333,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
                     sprintf(c_temp, "%d\n", (int)webcam_angle);
-                    write(file,c_temp,strlen(c_temp));
+                    file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
                     double vehicle_angle = -fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI)-M_PI/2.;
