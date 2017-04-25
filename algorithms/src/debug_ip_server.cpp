@@ -335,7 +335,7 @@ void *connection_handler(void * pointer)
 		int j=0;
 		if(retval==1 && i<99 && line[j++]=='?')
 		{
-			char* tit="xyt";
+			const char* tit="xyt";
 			for (int k=0;k<3;k++)
 			{
 				if(line[j++]!=tit[k])
@@ -343,11 +343,12 @@ void *connection_handler(void * pointer)
 				if(line[j++]!='=')
 					break;
 				c[k]=&line[j];
-				while(line[j]!='&' && line[j]!=0)
+				while(line[j]!='&' && line[j]!=0 && line[j]!=' ' && line[j]!='\r' && line[j]!='\n')
 					j++;
 				if(line[j]==0)
 					break;
 				line[j]=0;
+				j++;
 			}
 		}
 		if(c[0] && c[1] && c[2])
