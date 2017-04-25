@@ -335,7 +335,7 @@ void *connection_handler(void * pointer)
 		int j=0;
 		if(retval==1 && i<99 && line[j++]=='?')
 		{
-			char tit="xyt";
+			char* tit="xyt";
 			for (int k=0;k<3;k++)
 			{
 				if(line[j++]!=tit[k])
@@ -353,7 +353,8 @@ void *connection_handler(void * pointer)
 		if(c[0] && c[1] && c[2])
 		{
 			float m[3];
-			for (int k=0;k<3;k++)
+			int k;
+			for (k=0;k<3;k++)
 			{
 				char*pend;
 				m[k]=strtod(c[k],&pend);
