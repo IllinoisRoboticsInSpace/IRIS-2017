@@ -39,6 +39,19 @@ function scaleData(unscaledData, height, width) {
 }
 
 //////////////////////////////////////////////////
+function unscaleData(point, height, width) {
+	var x = d3.scaleLinear()
+			  .range([X_MIN, X_MAX])
+			  .domain([0, $("#navigation-plot").width()]);
+
+	var y = d3.scaleLinear()
+			  .range([Y_MIN, Y_MAX])
+			  .domain([0, $("#navigation-plot").height()]);
+	xcor = Math.round(x(point[0]));
+	ycor =  Math.round(y(point[1]));
+	return	[xcor,ycor];
+}
+//////////////////////////////////////////////////
 
 //Initialize the path visualization
 function setupPathElements() {
@@ -134,3 +147,15 @@ window.onload = function() {
 		updateConnection(svgElement);},
 		3000);
 }
+
+$(document).ready(function(){
+    $("#navigation-plot").click(function(e){
+   var parentOffset = $(this).offset(); 
+   //or $(this).offset(); if you really just want the current element's offset
+   var relX = e.pageX - parentOffset.left;
+   var relY = e.pageY - parentOffset.top;
+   test = [relX, relY];
+   alert(unscaleData(test,height,width));
+  // alert(unscaleData(test, height, width));
+});
+});
