@@ -150,7 +150,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     
     
 	SerialStream file; // serial port
-	file.SetBaudRate(SerialStreamBuf::BAUD_9600);
+	
 	while(1){
 	    file.Open("/dev/ttyACM0");
 	    if (file.IsOpen()) {
@@ -161,6 +161,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 	    }
 		sleep(10);
 	}
+	file.SetBaudRate(SerialStreamBuf::BAUD_9600);
 
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
