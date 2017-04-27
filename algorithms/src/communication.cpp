@@ -17,7 +17,7 @@
 
 using namespace std;
 
-char * motor_port=(char*)"/dev/ttyACM0";
+char * motor_port=(char*)"/dev/ttyACM1";
 
 void* communication(void * unused)
 {
@@ -34,7 +34,7 @@ void* communication(void * unused)
         char c[100];
         sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
         write(file, c, strlen(c));
-
+        sleep(.1);
 
     }
 }
