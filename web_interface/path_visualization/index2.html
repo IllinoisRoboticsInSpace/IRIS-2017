@@ -6,10 +6,7 @@
 
 		<title>IRIS 7 Navigation Visualization</title>
 
-		<!-- Load D3 scripts for visualization -->
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-
-		<!-- Load visualization script to draw the navigation plot -->
 		<script src="visualization2.js" ></script>
 
 		<!-- Load CSS script for styling -->
@@ -17,26 +14,20 @@
 	</head>
 
 	<body>
-		<div class="container-fluid">
-			<div class="row">
+		<!-- Sidebar -->
+		<div class="sidebar col-2" id="sidebar">
+			<div class="sidebar-container">
+				<button class="button button-start" id="buttonStart">START</button>
+				<button class="button button-manual" id="buttonManual">MANUAL</button>
+				<button class="button button-stop" id="buttonStop">STOP</button>
+			</div>
+		</div>
 
-				<!-- Sidebar -->
-				<nav class="col-2 sidebar" id="nav-settings">
-					<button class="button button-refresh" id="refresh-connection">Refresh Connection</button>
-					<hr>
-
-					<!-- TODO: Add more features such as toggle an option for using the orientation, etc. -->
-					<div style="text-align:center">
-						<p><i>Overlay previous paths to see evolution</i></p>
-					</div>
-					<input type="radio" name="overlay-paths" checked> Most Recent Path<br>
-					<input type="radio" name="overlay-paths"> Last 5 Recent Paths<br>
-					<input type="radio" name="overlay-paths"> All Previous Paths
-					<hr>
-				</nav>
-
-				<!-- Main content -->
-				<div class="col-10" id="navigation-plot"></div>
+		<!-- Main content -->
+		<div class="content">
+			<div class="map-container col-8" id="navigation-plot">MAP</div>
+			<div class="telemetry-container col-4">
+				<div class="telemetry">TELEMETRY</div>
 			</div>
 		</div>
 
