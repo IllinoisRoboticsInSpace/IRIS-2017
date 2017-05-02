@@ -1,27 +1,57 @@
-* {
+*{
 	box-sizing: border-box;
 }
-
-body {
+body{
 	margin: 0px;
 }
 
-.row {
-	height: 100vh;
+[class*="col-"]{
+    height: 100%;
+    float: left;
 }
+.col-1{width: 8.333%;}
+.col-2{width: 16.666%;}
+.col-3{width: 25%;}
+.col-4{width: 33.333%;}
+.col-5{width: 41.667%;}
+.col-6{width: 50%;}
+.col-7{width: 58.333%;}
+.col-8{width: 66.667%;}
+.col-9{width: 75%;}
+.col-10{width: 83.333%;}
+.col-11{width: 91.667%;}
+.col-12{width: 100%;}
 
-.col {
-	height:100vh;
-	width: 100vw;
+[class*="flex-box-"]{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
 }
+.flex-box-row{flex-direction: row;}
+.flex-box-row-reverse{flex-direction: row-reverse;}
+.flex-box-col{flex-direction: column;}
+.flex-box-col-reverse{flex-direction: column-reverse;}
 
-.col-2 {
-	background-color: #eee;
-	border-right: 1px solid #ddd;
-	height: 100vh;
-	width: 20%;
+[class*="flex-item-"]{
+    margin: auto;
+}
+.flex-item-1{flex: 1;}
+.flex-item-2{flex: 2;}
+.flex-item-3{flex: 3;}
+.flex-item-4{flex: 4;}
+
+/* Content */
+.sidebar{
+    height: 750px;
 	position: fixed;
-	padding: 20px;
+	padding: 10px;
+    background-color: #eee;
+    border-right: 1px solid #ddd;
+}
+.content{
+    height: 750px;
+    width: 100%;
 }
 
 .col-10 {
@@ -29,32 +59,77 @@ body {
     background-origin: content-box;
     background-position: top left;
     background-size: 480px 540px;
-    height: 100vh;
-	width: 80%;
 	float: right;
-	padding: 20px;
+	/*padding: 20px;*/
+}
+
+.sidebar-container{
+    height: 100%;
+    width: 218px;
+    margin: auto;
+    text-align: center;
+}
+
+.map-container{
+    height: 100%;
+    width: 720px;
+    right: 240px;
+    margin-left: 240px;
+    border-right: 1px solid #888;
+}
+#navigationPlot{
+    height: 560px;
+    max-width: 480px;
+    background-color: #ff8c40;
+}
+
+.telemetry-container{
+    height: 740px;
+    min-width: 240px;
+}
+.telemetry{
+    height: 100%;
+    max-width: 100%;
+    background-color: #408cff;
 }
 
 .button {
+    height: 50px;
+    width: 150px;
     border: none;
     border-radius: 12px;
     text-align: center;
     font-size: 16px;
-    display: block;
-    margin: auto;
+    margin: 16px;
     padding: 16px 32px;
     outline: none;
     cursor: pointer;
-    transition-duration: 0.4s;
+    transition-duration: 0.3s;
 }
-
-.button-refresh {
+#buttonStart{
+    background-color: #65e867;
+    color: white;
+    border: 2px solid #65e867;
+}
+#buttonStart:hover {
+    background-color: white; 
+    color: black; 
+}
+#buttonManual{
+    background-color: #6765e8;
+    color: white;
+    border: 2px solid #6765e8;
+}
+#buttonManual:hover {
+    background-color: white; 
+    color: black; 
+}
+#buttonStop {
 	background-color: #f44336;
     color: white;
     border: 2px solid #f44336;
 }
-
-.button-refresh:hover {
+#buttonStop:hover {
     background-color: white; 
     color: black; 
 }

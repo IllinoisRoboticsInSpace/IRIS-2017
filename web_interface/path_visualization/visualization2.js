@@ -39,11 +39,24 @@ function scaleData(unscaledData, height, width) {
 }
 
 //////////////////////////////////////////////////
+function unscaleData(point, height, width) {
+	var x = d3.scaleLinear()
+			  .range([X_MIN, X_MAX])
+			  .domain([0, $("#navigationPlot").width()]);
+
+	var y = d3.scaleLinear()
+			  .range([Y_MIN, Y_MAX])
+			  .domain([0, $("#navigationPlot").height()]);
+	xcor = Math.round(x(point[0]));
+	ycor =  Math.round(y(point[1]));
+	return	[xcor,ycor];
+}
+//////////////////////////////////////////////////
 
 //Initialize the path visualization
 function setupPathElements() {
 	//Create the SVG element
-	var svg = d3.select("#navigation-plot")
+	var svg = d3.select("#navigationPlot")
 				.append("svg")
 				.attr("width", width)
 				.attr("height", height);
@@ -63,6 +76,11 @@ function setupPathElements() {
 }
 
 //////////////////////////////////////////////////
+
+//Updates the map with new data
+function updateMap(data, canvas) {
+	//TODO
+}
 
 //Updates the path with new data
 function updatePath(data, svg) {
@@ -88,9 +106,12 @@ function updatePath(data, svg) {
 
 //////////////////////////////////////////////////
 
-function updateConnection(svgElement) {
+function updateConnection(svgElement, canvas) {
 	try {
-		console.log("Fetching data from the server...")
+		obsData = $.get(OBS_URL, function(rawData) {
+			updateMap(JSON.parse(rawData).data, canvas);
+		})
+		console.log("Fetching data from the server...");
 		parsedData = $.get(PATH_URL, function(rawData) {
 			updatePath(JSON.parse(rawData).data, svgElement);
 		});
@@ -99,7 +120,7 @@ function updateConnection(svgElement) {
 		background = $.get(OBS_URL, function(data) {
 			console.log(data);
 		});
-		document.getElementById("navigation-plot").style.backgroundImage = "url(" + OBS_URL + "?" + time.getTime() + ")";
+		document.getElementById("navigationPlot").style.backgroundImage = "url(" + OBS_URL + "?" + time.getTime() + ")";
 	}
 	catch(err) {
 
@@ -114,14 +135,13 @@ window.onload = function() {
 	//Set the height and width variables
 	width = 160*3;
 	height = 180*3;
-	//width = document.getElementById("navigation-plot").clientWidth - 40;
-	//height = document.getElementById("navigation-plot").clientHeight - 40;
 
 	//Get the SVG element for later updating
 	var svgElement = setupPathElements();
+	var canvas = document.getElementById("navigationPlot");
 
 	//Connect to the server to get data
-	updateConnection(svgElement);
+	updateConnection(svgElement, canvas);
 
 	//Bind click event to the button
 	document.getElementById("refresh-connection").addEventListener("click", function() {
@@ -134,3 +154,15 @@ window.onload = function() {
 		updateConnection(svgElement);},
 		3000);
 }
+
+$(document).ready(function(){
+    $("#navigationPlot").click(function(e){
+   var parentOffset = $(this).offset(); 
+   //or $(this).offset(); if you really just want the current element's offset
+   var relX = e.pageX - parentOffset.left;
+   var relY = e.pageY - parentOffset.top;
+   test = [relX, relY];
+   alert(unscaleData(test,height,width));
+  // alert(unscaleData(test, height, width));
+});
+});

@@ -7,7 +7,12 @@
 		<title>IRIS 7 Navigation Visualization</title>
 
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script src="visualization2.js" ></script>
+
+		<!-- Load JQuery scripts for use -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+		<!-- Load visualization script to draw the navigation plot -->
+		<script src="visualization2.js"></script>
 
 		<!-- Load CSS script for styling -->
 		<link href="visualization2.css" rel="stylesheet">
@@ -17,21 +22,20 @@
 		<!-- Sidebar -->
 		<div class="sidebar col-2" id="sidebar">
 			<div class="sidebar-container">
-				<button class="button button-start" id="buttonStart">START</button>
-				<button class="button button-manual" id="buttonManual">MANUAL</button>
-				<button class="button button-stop" id="buttonStop">STOP</button>
+				<button class="button" id="buttonStart">START</button>
+				<button class="button" id="buttonManual">MANUAL</button>
+				<button class="button" id="buttonStop">STOP</button>
 			</div>
 		</div>
 
 		<!-- Main content -->
-		<div class="content">
-			<div class="map-container col-8" id="navigation-plot">MAP</div>
-			<div class="telemetry-container col-4">
-				<div class="telemetry">TELEMETRY</div>
+		<div class="content col-10">
+			<div class="map-container col-8 flex-box-row" id="navigation-plot">
+				<canvas class="flex-item-1" id="navigationPlot"></canvas>
+			</div>
+			<div class="telemetry-container flex-box-row">
+				<div class="telemetry flex-item-1">TELEMETRY</div>
 			</div>
 		</div>
-
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
 	</body>
 </html>
