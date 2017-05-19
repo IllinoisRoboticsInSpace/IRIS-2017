@@ -39,7 +39,7 @@ float lastDelta=1;
 
 const float angle_break=250;
 const float angle_scale=-.5;
-const float angle_offset=-110;
+const float angle_offset=-250;
 
 long int millis()
 {
