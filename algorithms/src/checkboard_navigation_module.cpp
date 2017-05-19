@@ -312,7 +312,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     //cout << "dx " << dx << " dy " << dy << endl;
 
                     //rotate webcam!
-                    float delta = c*180. / M_PI / 33. ;
+                    float delta = c*180. / M_PI / 20. ;
                     if (delta!=0){
                         lastDelta=delta;
                         printf("THIS IS DELTA YO %f\n", lastDelta);
