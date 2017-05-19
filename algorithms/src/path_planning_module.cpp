@@ -34,6 +34,7 @@ const double K_TURN_CONTROL = 180;
 //Global variables
 volatile double goal_x=0.;
 volatile double goal_y=0.;
+volatile double goal_t=0.;
 extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
@@ -104,7 +105,7 @@ void* path_planning(void* unused)
 
             //Tells where the robot starts and ends at
             pose2d start(pos.x/5., pos.y/5., pos.t+M_PI);
-            pose2d end(goal_x/5., goal_y/5., pos.t); //change this later
+            pose2d end(goal_x/5., goal_y/5., goal_t); //change this later
 
             //creates a random path generator, runs 500 iterations per round, avoiding obstacles
             //check RRT.hpp to see how this function works

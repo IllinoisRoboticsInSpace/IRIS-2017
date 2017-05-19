@@ -7,6 +7,8 @@
 #include <pthread.h> //for threading , link with lpthread
 #include "data_structure.hpp"
 #include <string>
+#include <stdlib.h>
+#include <cstdlib>
 
 /*
 We need to get in the habit of stating very clearly what each file's purpose is at the top of the file!
@@ -16,6 +18,9 @@ Unfortunately I don't know exactly what this file is for. Someone else will have
 
 extern std::string positionsString;
 extern volatile bool positionStringIsUsed;
+extern volatile double goal_x;
+extern volatile double goal_y;
+extern volatile double goal_t;
 
 struct data_connection
 {
@@ -312,6 +317,71 @@ void *connection_handler(void * pointer)
     }
     
     
+    else if (code == 'P') // Set target (xxx,yyy,ttt). http://ip/P?x=xxx&y=yyy&t=ttt
+    {
+		char line[100];
+		int retval=1;
+		int i=0;
+		while(retval==1 && i<99)
+		{
+			retval=recv(sock , &line[i] , 1 , 0);
+			if(line[i]=='\n')
+				break;
+			i++;
+		}
+		i++;
+		line[i]=0;
+		char *c[3]={0,0,0};
+		int j=0;
+		if(retval==1 && i<99 && line[j++]=='?')
+		{
+			const char* tit="xyt";
+			for (int k=0;k<3;k++)
+			{
+				if(line[j++]!=tit[k])
+					break;
+				if(line[j++]!='=')
+					break;
+				c[k]=&line[j];
+				while(line[j]!='&' && line[j]!=0 && line[j]!=' ' && line[j]!='\r' && line[j]!='\n')
+					j++;
+				if(line[j]==0)
+					break;
+				line[j]=0;
+				j++;
+			}
+		}
+		if(c[0] && c[1] && c[2])
+		{
+			float m[3];
+			int k;
+			for (k=0;k<3;k++)
+			{
+				char*pend;
+				m[k]=strtod(c[k],&pend);
+				if(*pend!=0) //error
+				{
+					k=999;
+					break;
+				}
+			}
+			if(k!=999)
+			{
+				goal_x=m[0];
+				goal_y=m[1];
+				goal_t=m[2];
+				message = "HTTP/1.1 200 OK\r\n"
+				"Accept-Ranges: none\r\n"
+				"Content-Length: 8\r\n\r\nSuccess.";
+                write(sock , message , strlen(message));
+			}
+		}
+		message = "HTTP/1.1 400 Bad Request\r\n"
+		"Accept-Ranges: none\r\n"
+		"Content-Length: 15\r\n\r\nNot understood.";
+		write(sock , message , strlen(message));			
+	}
+	
     
     else if (code == '?') 
     {
@@ -379,7 +449,7 @@ void *connection_handler(void * pointer)
         
         *read_image=true;
         
-    static int cccount=0;
+		static int cccount=0;
         std::cout<<"\033[0;30m"<<"IP SERVER image_read"<<cccount<<"\033[0m\n";
         cccount++;
         std::string output;
