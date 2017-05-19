@@ -37,6 +37,10 @@ float lastDelta=1;
     //return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
 //}
 
+const float angle_break=110;
+const float angle_scale=.5;
+const float angle_offset=250;
+
 long int millis()
 {
     struct timeval tp;
@@ -316,14 +320,14 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     if (abs(delta) > 1)
                         webcam_angle += delta;
                     bool long_turn = false;
-                    if (webcam_angle < 0)
+                    if (webcam_angle < (angle_break-360+5))
                     {
-                        webcam_angle = 355;
+                        webcam_angle = angle_break-5;
                         long_turn = true;
                     }
-                    if (webcam_angle > 360)
+                    if (webcam_angle > (angle_break-5))
                     {
-                        webcam_angle = 5;
+                        webcam_angle = (angle_break-360+5);
                         long_turn = true;
                     }
                    // std::string s = std::to_string(((int)webcam_angle)%180);
@@ -335,7 +339,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", 11+(int)(webcam_angle * 0.225)); //0.225 is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
+                    sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
@@ -380,7 +384,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
                     static const int delta_angle = 10;
 
-                    if (webcam_angle + delta_angle*sweep_dir > 360 || webcam_angle + delta_angle*sweep_dir < 0){
+                    if (webcam_angle + delta_angle*sweep_dir > angle_break || webcam_angle + delta_angle*sweep_dir < (angle_break-360)){
                         sweep_dir = -sweep_dir;
                         lastDelta = sweep_dir;
                     }
@@ -388,7 +392,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     
                    
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", 11+(int)(webcam_angle * 0.225)); //0.225 is the servo magic number - pulse length to degrees 
+                    sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d\n", (int)webcam_angle);
                     
