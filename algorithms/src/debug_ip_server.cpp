@@ -389,6 +389,7 @@ void *connection_handler(void * pointer)
         //Reply to the client
         message = "HTTP/1.1 200 OK\r\n"
                 "Accept-Ranges: none\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
                 "Content-Length: ";
         write(sock , message , strlen(message));
         sprintf(buffer,"%d", (int)output.length());
