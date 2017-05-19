@@ -37,9 +37,9 @@ float lastDelta=1;
     //return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
 //}
 
-const float angle_break=110;
-const float angle_scale=.5;
-const float angle_offset=250;
+const float angle_break=250;
+const float angle_scale=-.5;
+const float angle_offset=-110;
 
 long int millis()
 {
