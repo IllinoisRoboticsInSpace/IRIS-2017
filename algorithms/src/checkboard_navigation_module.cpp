@@ -339,7 +339,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
+                    sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)(angle_offset+(int)(webcam_angle * angle_scale)));
                     
@@ -392,7 +392,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     
                    
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
+                    sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)(angle_offset+(int)(webcam_angle * angle_scale)));
                     
