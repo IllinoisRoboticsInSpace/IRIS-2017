@@ -341,7 +341,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     char c_temp[100];
                     sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
                     file.write(c_temp,strlen(c_temp));
-                    printf("Angle sent:%d\n", (int)webcam_angle);
+                    printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)(angle_offset+(int)(webcam_angle * angle_scale)));
                     
                     double vehicle_angle = -fmod2pi(webcam_angle*M_PI / 180. - atan2(y, x) - M_PI)-M_PI/2.;
 
@@ -394,7 +394,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     char c_temp[100];
                     sprintf(c_temp, "%d\n", angle_offset+(int)(webcam_angle * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
                     file.write(c_temp,strlen(c_temp));
-                    printf("Angle sent:%d\n", (int)webcam_angle);
+                    printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)(angle_offset+(int)(webcam_angle * angle_scale)));
                     
                     long int t = millis();
                     while (millis() - t < 300)
