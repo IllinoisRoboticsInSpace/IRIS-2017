@@ -40,7 +40,7 @@ float lastDelta=1;
 const float angle_break=270;
 const float angle_scale=-.5;
 const float angle_offset=-270;
-const float angle_multiplier=1/3.;
+const float angle_multiplier=2/3.;
 
 long int millis()
 {
