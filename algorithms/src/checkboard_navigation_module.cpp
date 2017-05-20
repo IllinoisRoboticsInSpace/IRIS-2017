@@ -37,9 +37,9 @@ float lastDelta=1;
     //return fmod(fmod(v,M_PI*2)+M_PI*4,M_PI*2);
 //}
 
-const float angle_break=245;
-const float angle_scale=-.5;
-const float angle_offset=-245;
+const float angle_break=270;
+const float angle_scale=-.49;
+const float angle_offset=-270;
 const float angle_multiplier=1/3.;
 
 long int millis()
@@ -355,7 +355,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     //lock = 1;
                     pos_chesspos.x = x;
                     pos_chesspos.y = y;
-                    pos_chesspos.t = vehicle_angle;
+                    pos_chesspos.t = vehicle_angle-90;
                     pos_chesspos.millis = millis_timestamp;
                     //lock = 0;
 
