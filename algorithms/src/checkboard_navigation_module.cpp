@@ -344,7 +344,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
-                    double vehicle_angle = -fmod2pi((webcam_angle-90)*M_PI / 180. - atan2(y, x) - M_PI)+M_PI/2.;
+                    double vehicle_angle = -fmod2pi((webcam_angle-90)*M_PI / 180. - atan2(y, x) - M_PI); //+M_PI/2.;
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
                          << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
