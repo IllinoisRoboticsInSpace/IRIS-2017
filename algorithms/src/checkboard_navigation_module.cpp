@@ -40,6 +40,7 @@ float lastDelta=1;
 const float angle_break=245;
 const float angle_scale=-.5;
 const float angle_offset=-245;
+const float angle_multiplier=1/3.;
 
 long int millis()
 {
@@ -312,7 +313,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     //cout << "dx " << dx << " dy " << dy << endl;
 
                     //rotate webcam!
-                    float delta = c*180. / M_PI / 20. ;
+                    float delta = c*180. / M_PI * angle_multiplier ;
                     if (delta!=0){
                         lastDelta=delta;
                         printf("THIS IS DELTA YO %f\n", lastDelta);
