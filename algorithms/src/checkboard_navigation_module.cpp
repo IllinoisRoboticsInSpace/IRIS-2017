@@ -348,8 +348,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
                          << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
-                         << "webcam angle th \e[35m" << webcam_angle
-                         << "\e[0m delta " << delta << " vehicle " << vehicle_angle*180. / M_PI << endl;
+                         << "webcam angle th " << webcam_angle
+                         << " delta " << delta << " vehicle \e[35m" << vehicle_angle*180. / M_PI << "\e[0m" <<endl;
 
                     //while (lock);
                     //lock = 1;
