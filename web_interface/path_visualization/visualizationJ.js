@@ -29,7 +29,7 @@ function scaleData(unscaledData, height, width) {
 	scaledData = [];
 	//Scale the data
 	for (var i = 0; i < unscaledData.length; i++) {
-		scaledData.push([(unscaledData[i][0]-X_MIN)*width/(X_MAX-X_MIN), (unscaledData[i][1]-Y_MIN)*height/(Y_MAX-Y_MIN),unscaledData[i][3]]);
+		scaledData.push([(unscaledData[i][0]-X_MIN)*width/(X_MAX-X_MIN), (unscaledData[i][1]-Y_MIN)*height/(Y_MAX-Y_MIN),unscaledData[i][2]]);
 	};
 	return scaledData;
 }
@@ -72,18 +72,19 @@ function updatePos(pos) {
 	var path = d3.path();
 	path.moveTo(pos[0], pos[1]);
 	console.log(pos);
-	var x1=pos[0]+10*Math.sin(pos[2]);
-	var y1=pos[1]-10*Math.cos(pos[2]);
+	var size=50;
+	var x1=pos[0]+size*Math.sin(pos[2]);
+	var y1=pos[1]-size*Math.cos(pos[2]);
 	path.lineTo(x1,y1);
 	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
 	path = d3.path();
-	path.moveTo((x1+pos[0]-10*Math.cos(pos[2]))/2., (y1+pos[1]-10*Math.sin(pos[2]))/2.);
+	path.moveTo((x1+pos[0]-size*Math.cos(pos[2]))/2., (y1+pos[1]-size*Math.sin(pos[2]))/2.);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
-	path = d3.path((x1+pos[0]+10*Math.cos(pos[2]))/2., (y1+pos[1]+10*Math.sin(pos[2]))/2.);
-	path.moveTo(pos[0], pos[1]);
+	d3.select("#navigationPlot").select("#path_pos_2").attr("d",path.toString());
+	path = d3.path();
+	path.moveTo((x1+pos[0]+size*Math.cos(pos[2]))/2., (y1+pos[1]+size*Math.sin(pos[2]))/2.);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
+	d3.select("#navigationPlot").select("#path_pos_3").attr("d",path.toString());
 }
 
 //Initialize the path visualization
@@ -125,20 +126,20 @@ function setupPathElements() {
 	svg.append("path")
 				  .attr("id", "path_pos_1")
 				  .attr("d", d3.path().toString())
-				  .attr("stroke", PATH_COLOR)
-				  .attr("stroke-width", 1)
+				  .attr("stroke", "blue")
+				  .attr("stroke-width", 2)
 				  .attr("fill", "none");
 	svg.append("path")
 				  .attr("id", "path_pos_2")
 				  .attr("d", d3.path().toString())
-				  .attr("stroke", PATH_COLOR)
-				  .attr("stroke-width", 1)
+				  .attr("stroke", "blue")
+				  .attr("stroke-width", 2)
 				  .attr("fill", "none");
 	svg.append("path")
 				  .attr("id", "path_pos_3")
 				  .attr("d", d3.path().toString())
-				  .attr("stroke", PATH_COLOR)
-				  .attr("stroke-width", 1)
+				  .attr("stroke", "blue")
+				  .attr("stroke-width", 2)
 				  .attr("fill", "none");
 	
 	
@@ -188,5 +189,5 @@ window.onload = function() {
 	//Set the interval timer
 	var timer = setInterval(function() {
 		updateConnection(svgElement);},
-		3000);
+		300);
 }

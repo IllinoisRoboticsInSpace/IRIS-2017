@@ -486,15 +486,15 @@ void *connection_handler(void * pointer)
         }
         std::string output;
         deflate_string(map_json,output);
-        
-        const char * html = output.c_str();
+        *read_image=true;
+    
         
         message = "HTTP/1.1 200 OK\r\n"
                 "Accept-Ranges: none\r\n"
                 "Access-Control-Allow-Origin: *\r\n"
                 "Content-Length: ";
         write(sock , message , strlen(message));
-        sprintf(buffer,"%d",(int)strlen(html));
+        sprintf(buffer,"%d",(int)output.length());
         write(sock , buffer , strlen(buffer));
         message = "\r\n"
                 "Keep-Alive: Off\r\n"
@@ -505,9 +505,9 @@ void *connection_handler(void * pointer)
                 "Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\n"
                 "\r\n";
         write(sock , message , strlen(message));
-        write(sock , html , strlen(html));
+        write(sock , output.c_str() , output.length());
         
-        *read_image=true;
+        
         
     }
     
