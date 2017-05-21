@@ -28,14 +28,19 @@ void* communication(void * unused)
 
         file= open(motor_port,O_RDWR);
 
-    while(1)
-    {
-        locate_motor desired = get_desired_motor();
-        char c[100];
-        sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
-        write(file, c, strlen(c));
-        sleep(.1);
+        while(1)
+        {
+            locate_motor desired = get_desired_motor();
+            char c[100];
+            sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
+            n=write(file, c, strlen(c));
+            if(n==0)
+            {
+                close(file);
+                break;
+            }
+            sleep(.1);
 
+        }
     }
-}
 }

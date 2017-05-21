@@ -35,10 +35,11 @@ const double K_TURN_CONTROL = 180;
 volatile double goal_x=0.;
 volatile double goal_y=0.;
 volatile double goal_t=M_PI;
+enum{FORWARD=1, BACKWARDS =-1, ANY_DIR=0};
+volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
-enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
-
+enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1};
 volatile int bin_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
 volatile int paddle_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
 volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
@@ -46,7 +47,7 @@ volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
 //minimum path radious for RRT
 const double min_radius = 10;
 
-volatile int control_direction=1;
+
 /**
 * Checks whether or not if the robot will collide if it is at x,y, and angle theta.
 * @return false if the robot will collide, true otherwise.
@@ -97,8 +98,12 @@ void* path_planning(void* unused)
     
     std::cout<<"\033[0;32m"<< "PATHPLAN: got first position!"<<"\033[0m\n";
     
+    path old_path;
+    float old_direction=1;
+    
     while(1)
     {
+        float direction=1;
         double forward_cntl;
         double turning_cntl;
         //Get robot position
@@ -106,22 +111,64 @@ void* path_planning(void* unused)
         
         if(!pathplan_map_used) {
     		
+            path p_forward;
+            if(control_direction!=BACKWARDS)
+            {
+                //Tells where the robot starts and ends at
+                pose2d start(pos.x/5., pos.y/5., pos.t-M_PI/2.);
+                pose2d end(goal_x/5., goal_y/5., goal_t-M_PI/2.); //change this later
 
-            //Tells where the robot starts and ends at
-            pose2d start(pos.x/5., pos.y/5., pos.t-M_PI/2.);
-            pose2d end(goal_x/5., goal_y/5., goal_t-M_PI/2.); //change this later
-
-            //creates a random path generator, runs 500 iterations per round, avoiding obstacles
-            //check RRT.hpp to see how this function works
-            path p = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
-
-            pose2d nextGoal;
-            //nextGoal is changed in the following function, passed by reference
-            if (p.get_position(10, nextGoal)) {
-                std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
+                //creates a random path generator, runs 500 iterations per round, avoiding obstacles
+                //check RRT.hpp to see how this function works
+                p_forward = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
             }
-            else {
+            path p_backwards
+            if(control_direction!=FORWARD)
+            {
+                //Tells where the robot starts and ends at
+                pose2d start(pos.x/5., pos.y/5., pos.t+M_PI/2.);
+                pose2d end(goal_x/5., goal_y/5., goal_t+M_PI/2.); //change this later
+
+                //creates a random path generator, runs 500 iterations per round, avoiding obstacles
+                //check RRT.hpp to see how this function works
+                p_backwards = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
+            }
+            
+            path &p;
+            
+            switch(control_direction)
+            {
+                case(FORWARD):
+                    p=p_forward;
+                    direction=1;
+                    break;
+                case(BACKWARDS):
+                    p=p_backwards;
+                    direction=-1;
+                    break;
+                default:
+                    if((p_forward.get_length()<p_backwards.get_length())&&p_forward.get_length()>0.)
+                    {
+                        p=p_forward;
+                        direction=1;
+                    }
+                    else
+                    {
+                        p=p_backwards;
+                        direction=-1;
+                    }
+            }
+            if(p.get_length()==0.)
+            {
+                p=old_path;
+                direction=old_direction;
                 std::cout<<"\033[0;42m"<< "PATHPLAN: **************** error in the path *******************"<<"\033[0m\n";
+                std::cout<<"\033[0;32m"<< "PATHPLAN: Using old path"<<"\033[0m\n";
+            }else
+            {
+                old_path=p;
+                old_direction=direction;
+                std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
             }
 
             pathplan_map_used = true;            
@@ -173,8 +220,8 @@ void* path_planning(void* unused)
             
                 double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
                 
-                turning_cntl=K_TURN_CONTROL*theta;
-                forward_cntl=F_FORWARD_CONTROL;
+                turning_cntl=direction*K_TURN_CONTROL*theta;
+                forward_cntl=direction*F_FORWARD_CONTROL;
             }
             else
             {
