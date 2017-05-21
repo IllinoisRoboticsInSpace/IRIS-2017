@@ -63,7 +63,7 @@ function updateMap(data_map) {
 	//DRAW MAP  ******************************
 	for(var x=0;x < (X_MAX-X_MIN);x++) {
 		for(var y=0; y<Y_MAX;y++) {
-			d3.select("#navigationPlot").select("#map_sq_"+x+"_"+y).style("fill", data_map[x][y]==0?"black":data_map[x][y]==1?"white":"purple");
+			d3.select("#navigationPlot").select("#map_sq_"+x+"_"+y).style("fill", data_map[x][y]==1?"black":data_map[x][y]==0?"white":"purple");
 		}
 	}
 }

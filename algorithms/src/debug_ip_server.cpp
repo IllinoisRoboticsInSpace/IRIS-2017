@@ -485,6 +485,10 @@ void *connection_handler(void * pointer)
             sleep(0.1);
         }
         const char * html = map_json.c_str();
+
+        deflate_string(map_json,output);
+        const char * html = output.c_str();
+        
         message = "HTTP/1.1 200 OK\r\n"
                 "Accept-Ranges: none\r\n"
                 "Access-Control-Allow-Origin: *\r\n"
@@ -496,6 +500,7 @@ void *connection_handler(void * pointer)
                 "Keep-Alive: Off\r\n"
                 "Connection: Close\r\n"
                 "Content-Type: text/html\r\n"
+                "Content-Encoding: deflate\r\n"
                 "Pragma: no-cache, no-store\r\n"
                 "Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\n"
                 "\r\n";
