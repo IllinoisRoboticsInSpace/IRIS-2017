@@ -373,12 +373,14 @@ void *connection_handler(void * pointer)
 				goal_t=m[2];
 				message = "HTTP/1.1 200 OK\r\n"
 				"Accept-Ranges: none\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
 				"Content-Length: 8\r\n\r\nSuccess.";
                 write(sock , message , strlen(message));
 			}
 		}
 		message = "HTTP/1.1 400 Bad Request\r\n"
 		"Accept-Ranges: none\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
 		"Content-Length: 15\r\n\r\nNot understood.";
 		write(sock , message , strlen(message));			
 	}
@@ -529,6 +531,7 @@ void *connection_handler(void * pointer)
                 "Keep-Alive: Off\r\n"
                 "Connection: Close\r\n"
                 "Content-Type: text/html\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
                 "Pragma: no-cache, no-store\r\n"
                 "Cache-Control: no-cache, no-store\r\n"
                 "\r\n";
