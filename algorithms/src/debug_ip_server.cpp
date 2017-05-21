@@ -368,8 +368,8 @@ void *connection_handler(void * pointer)
 			}
 			if(k!=999)
 			{
-				goal_x=m[0];
-				goal_y=m[1];
+				goal_x=m[0]*5;
+				goal_y=m[1]*5;
 				goal_t=m[2];
 				message = "HTTP/1.1 200 OK\r\n"
 				"Accept-Ranges: none\r\n"
