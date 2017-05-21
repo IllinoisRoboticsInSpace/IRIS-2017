@@ -354,7 +354,8 @@ void* thread_depth(void* arg)
                     for(int py=0; py<historicSizeY; py++)
                     {
                         if(py!=0) map_json+=",";
-                        map_json+=std::to_string((int)historic( px,py ));
+                        int val=historic( px,py );
+                        map_json+=std::to_string(val==map_defaultValue?9:val);
                     }
                     map_json+="]";
                 }
