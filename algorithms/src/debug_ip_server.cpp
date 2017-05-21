@@ -21,6 +21,7 @@ extern volatile bool positionStringIsUsed;
 extern volatile double goal_x;
 extern volatile double goal_y;
 extern volatile double goal_t;
+extern std::string map_json;
 
 struct data_connection
 {

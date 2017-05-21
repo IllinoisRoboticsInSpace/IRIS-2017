@@ -33,6 +33,7 @@ using namespace std;
 #include "debug_ip_server.h"
 #include "kinect_identification.h"
 #include <unistd.h>
+#include <string> 
 
 #define ROS_INFO(a) printf("%s",a) 
 
@@ -77,7 +78,7 @@ uint16_t* pDepth = NULL;
 //char* pDepthFeed = NULL;
 //uint16_t* pDepthDisplay = NULL;
 unsigned char* pMapHTTP = NULL;
-string map_json="";
+std::string map_json="";
 MATRIX pathplan_map(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
 
 Vec3f downDirection(0,0,0);//static to prevent other files from seeing this
