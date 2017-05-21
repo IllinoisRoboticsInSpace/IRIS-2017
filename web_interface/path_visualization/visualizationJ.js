@@ -71,18 +71,19 @@ function updatePos(pos) {
 	pos=scaleData([pos], height, width)[0];
 	var path = d3.path();
 	path.moveTo(pos[0], pos[1]);
+	console.log(pos);
 	var x1=pos[0]+10*Math.sin(pos[2]);
 	var y1=pos[1]-10*Math.cos(pos[2]);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
 	path = d3.path();
 	path.moveTo((x1+pos[0]-10*Math.cos(pos[2]))/2., (y1+pos[1]-10*Math.sin(pos[2]))/2.);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
 	path = d3.path((x1+pos[0]+10*Math.cos(pos[2]))/2., (y1+pos[1]+10*Math.sin(pos[2]))/2.);
 	path.moveTo(pos[0], pos[1]);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
 }
 
 //Initialize the path visualization
@@ -149,8 +150,9 @@ function setupPathElements() {
 function updateConnection(svgElement) {
 	try {
 		obsData = $.get(OBS_URL, function(rawData) {
-			updateMap(JSON.parse(rawData).data);
-			updatePos(JSON.parse(rawData).position);
+			var a=JSON.parse(rawData)
+			updateMap(a.data);
+			updatePos(a.position);
 		})
 		console.log("Fetching data from the server...");
 		parsedData = $.get(PATH_URL, function(rawData) {
@@ -186,5 +188,5 @@ window.onload = function() {
 	//Set the interval timer
 	var timer = setInterval(function() {
 		updateConnection(svgElement);},
-		500);
+		3000);
 }

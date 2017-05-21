@@ -359,7 +359,7 @@ void* thread_depth(void* arg)
                     }
                     map_json+="]";
                 }
-                map_json+="],\"position\":["+std::to_string((int)xPos)+","+std::to_string((int)yPos)+","+std::to_string(robot_pos.t)+"]}";
+                map_json+="],\"position\":["+std::to_string((int)xPos)+".,"+std::to_string((int)yPos)+".,"+std::to_string(robot_pos.t)+"]}";
                 tcpip_map_used = false;
                 std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
 
