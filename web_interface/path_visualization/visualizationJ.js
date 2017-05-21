@@ -29,7 +29,7 @@ function scaleData(unscaledData, height, width) {
 	scaledData = [];
 	//Scale the data
 	for (var i = 0; i < unscaledData.length; i++) {
-		scaledData.push([(unscaledData[i][0]-X_MIN)*width/(X_MAX-X_MIN), (unscaledData[i][1]-Y_MIN)*height/(Y_MAX-Y_MIN)]);
+		scaledData.push([(unscaledData[i][0]-X_MIN)*width/(X_MAX-X_MIN), (unscaledData[i][1]-Y_MIN)*height/(Y_MAX-Y_MIN),unscaledData[i][3]]);
 	};
 	return scaledData;
 }
@@ -45,8 +45,8 @@ function unscalePoint(point, height, width) {
 
 function updatePath(data_path) {
 	//DRAW PATH ******************************
-	var one=scaleData([[0,0]],height,width)[0];
-	var one1=scaleData([[1,1]],height,width)[0];
+	var one=scaleData([[0,0,0]],height,width)[0];
+	var one1=scaleData([[1,1,0]],height,width)[0];
 	one=[one1[0]-one[0],one1[1]-one[1]];
 	s_data_path = scaleData(data_path, height, width);
 	//Set the path element
@@ -57,7 +57,7 @@ function updatePath(data_path) {
 			path.lineTo(s_data_path[i][0]+one[0]/2, s_data_path[i][1]+one[1]/2);
 		}
 	}
-	d3.select("#navigationPlot").select("#path_plan").attr("d", path.toString())
+	d3.select("#navigationPlot").select("#path_plan").attr("d", path.toString());
 }
 function updateMap(data_map) {
 	//DRAW MAP  ******************************
@@ -66,6 +66,23 @@ function updateMap(data_map) {
 			d3.select("#navigationPlot").select("#map_sq_"+x+"_"+y).style("fill", data_map[x][y]==0?"black":data_map[x][y]==1?"white":"purple");
 		}
 	}
+}
+function updatePos(pos) {
+	pos=scaleData([pos], height, width)[0];
+	var path = d3.path();
+	path.moveTo(pos[0], pos[1]);
+	var x1=pos[0]+10*Math.sin(pos[2]);
+	var y1=pos[1]-10*Math.cos(pos[2]);
+	path.lineTo(x1,y1);
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
+	path = d3.path();
+	path.moveTo((x1+pos[0]-10*Math.cos(pos[2]))/2., (y1+pos[1]-10*Math.sin(pos[2]))/2.);
+	path.lineTo(x1,y1);
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
+	path = d3.path((x1+pos[0]+10*Math.cos(pos[2]))/2., (y1+pos[1]+10*Math.sin(pos[2]))/2.);
+	path.moveTo(pos[0], pos[1]);
+	path.lineTo(x1,y1);
+	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.to_string());
 }
 
 //Initialize the path visualization
@@ -78,8 +95,8 @@ function setupPathElements() {
 				.attr("height", height);
 
 	//Create empty map
-	var one=scaleData([[0,0]],height,width)[0];
-	var one1=scaleData([[1,1]],height,width)[0];
+	var one=scaleData([[0,0,0]],height,width)[0];
+	var one1=scaleData([[1,1,0]],height,width)[0];
 	one=[one1[0]-one[0],one1[1]-one[1]];
 
 	for(var x=0;x < (X_MAX-X_MIN);x++) {
@@ -95,18 +112,34 @@ function setupPathElements() {
 		}
 	}
 
-	//Set the initial path element
-	var path = d3.path();
-
 	//Plot the path
-	var svgPath = svg.append("path")
+	svg.append("path")
 				  .attr("id", "path_plan")
-				  .attr("d", path.toString())
+				  .attr("d", d3.path().toString())
 				  .attr("stroke", PATH_COLOR)
 				  .attr("stroke-width", 1)
 				  .attr("fill", "none");
 
-
+	//Position arrow
+	svg.append("path")
+				  .attr("id", "path_pos_1")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", PATH_COLOR)
+				  .attr("stroke-width", 1)
+				  .attr("fill", "none");
+	svg.append("path")
+				  .attr("id", "path_pos_2")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", PATH_COLOR)
+				  .attr("stroke-width", 1)
+				  .attr("fill", "none");
+	svg.append("path")
+				  .attr("id", "path_pos_3")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", PATH_COLOR)
+				  .attr("stroke-width", 1)
+				  .attr("fill", "none");
+	
 	
 	return svg;
 }
@@ -117,6 +150,7 @@ function updateConnection(svgElement) {
 	try {
 		obsData = $.get(OBS_URL, function(rawData) {
 			updateMap(JSON.parse(rawData).data);
+			updatePos(JSON.parse(rawData).position);
 		})
 		console.log("Fetching data from the server...");
 		parsedData = $.get(PATH_URL, function(rawData) {

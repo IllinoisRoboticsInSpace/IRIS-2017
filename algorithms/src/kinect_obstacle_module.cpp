@@ -354,11 +354,11 @@ void* thread_depth(void* arg)
                     for(int py=0; py<historicSizeY; py++)
                     {
                         if(py!=0) map_json+=",";
-                        map_json+=std::to_string(historic( px,py ));
+                        map_json+=std::to_string((int)historic( px,py ));
                     }
                     map_json+="]";
                 }
-                map_json+="]}";
+                map_json+="],\"position\":["+std::to_string((int)xPos)+","+std::to_string((int)yPos)+","+std::to_string(robot_pos.t)+"]}";
                 tcpip_map_used = false;
                 std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
 
