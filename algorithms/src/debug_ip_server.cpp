@@ -484,7 +484,6 @@ void *connection_handler(void * pointer)
         {
             sleep(0.1);
         }
-        const char * html = map_json.c_str();
 
         deflate_string(map_json,output);
         const char * html = output.c_str();
