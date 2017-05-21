@@ -12,6 +12,7 @@ const Y_MAX = 180;
 const PATH_COLOR = "#e02828";
 
 //URLs for obstacle map & path data
+const POS_URL = "http://odroid-desktop:8080/P"
 const OBS_URL = "http://odroid-desktop:8080/M"
 const PATH_URL = "http://odroid-desktop:8080/J"
 //const OBS_URL = "M"
@@ -87,6 +88,13 @@ function updatePos(pos) {
 	d3.select("#navigationPlot").select("#path_pos_3").attr("d",path.toString());
 }
 
+function send_pos(x,y)
+{
+	$.get(POS_URL+"?x="+x+"&y="+y+"&t=3.1415926", function(rawData) {
+			alert(rawData);
+		})
+}
+
 //Initialize the path visualization
 function setupPathElements() {
 	//Create the SVG element
@@ -110,7 +118,7 @@ function setupPathElements() {
 				.attr("width", one[0]*.9)
 				.attr("height", one[1]*.9)
 				.style("fill", "blue")
-				.attr("onclick", "alert(\"position is "+(x+X_MIN)+", "+y+"\")");
+				.attr("onclick", "send_pos("+(x+X_MIN)+", "+y+")");
 		}
 	}
 
