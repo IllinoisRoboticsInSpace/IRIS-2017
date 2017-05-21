@@ -40,7 +40,8 @@ float lastDelta=1;
 const float angle_break=270;
 const float angle_scale=-.5;
 const float angle_offset=-270;
-const float angle_multiplier=2/3.;
+const float angle_multiplier=1/3.;
+static const int delta_angle = 20;
 
 long int millis()
 {
@@ -382,8 +383,6 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         sweep_dir = 1;
                     }
                     printf("THIS IS DELTA YO %f\n", lastDelta);
-
-                    static const int delta_angle = 10;
 
                     if (webcam_angle + delta_angle*sweep_dir > angle_break || webcam_angle + delta_angle*sweep_dir < (angle_break-360)){
                         sweep_dir = -sweep_dir;
