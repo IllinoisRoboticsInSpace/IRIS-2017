@@ -477,6 +477,34 @@ void *connection_handler(void * pointer)
         write(sock , output.c_str() , output.length());
     }
     
+    else if(code == 'M')
+    {
+        while(*read_image)sleep(.010);
+        {
+            sleep(0.1);
+        }
+        const char * html = map_json.c_str();
+        message = "HTTP/1.1 200 OK\r\n"
+                "Accept-Ranges: none\r\n"
+                "Access-Control-Allow-Origin: *\r\n"
+                "Content-Length: ";
+        write(sock , message , strlen(message));
+        sprintf(buffer,"%d",(int)strlen(html));
+        write(sock , buffer , strlen(buffer));
+        message = "\r\n"
+                "Keep-Alive: Off\r\n"
+                "Connection: Close\r\n"
+                "Content-Type: text/html\r\n"
+                "Pragma: no-cache, no-store\r\n"
+                "Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\n"
+                "\r\n";
+        write(sock , message , strlen(message));
+        write(sock , html , strlen(html));
+        
+        *read_image=true;
+        
+    }
+    
     else
     {
         const char * html=

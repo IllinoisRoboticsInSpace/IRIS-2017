@@ -77,6 +77,7 @@ uint16_t* pDepth = NULL;
 //char* pDepthFeed = NULL;
 //uint16_t* pDepthDisplay = NULL;
 unsigned char* pMapHTTP = NULL;
+string map_json="";
 MATRIX pathplan_map(-historicHalfSizeX,historicHalfSizeX, 0, historicSizeY);
 
 Vec3f downDirection(0,0,0);//static to prevent other files from seeing this
@@ -344,6 +345,19 @@ void* thread_depth(void* arg)
                         pMapHTTP[i+2] = 255;
                     }
                 }
+                map_json="{\"data\":[";
+                for(int px=-historicHalfSizeX; px<historicHalfSizeX; px++)
+                {
+                    if(px!=-historicHalfSizeX) map_json+=",";
+                    map_json+="[";
+                    for(int py=0; py<historicSizeY; py++)
+                    {
+                        if(py!=0) map_json+=",";
+                        map_json+=std::to_string(historic( px,py ));
+                    }
+                    map_json+="]";
+                }
+                map_json+="]}";
                 tcpip_map_used = false;
                 std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
 
