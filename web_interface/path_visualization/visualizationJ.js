@@ -68,7 +68,7 @@ function updateMap(data_map) {
 		}
 	}
 }
-function updatePos(pos) {
+function updatePos(pos,label) {
 	pos=scaleData([pos], height, width)[0];
 	var path = d3.path();
 	path.moveTo(pos[0], pos[1]);
@@ -77,15 +77,15 @@ function updatePos(pos) {
 	var x1=pos[0]+size*Math.sin(pos[2]);
 	var y1=pos[1]-size*Math.cos(pos[2]);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_1").attr("d",path.toString());
+	d3.select("#navigationPlot").select("#"+label+"_1").attr("d",path.toString());
 	path = d3.path();
 	path.moveTo((x1+pos[0]-size*Math.cos(pos[2]))/2., (y1+pos[1]-size*Math.sin(pos[2]))/2.);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_2").attr("d",path.toString());
+	d3.select("#navigationPlot").select("#"+label+"_2").attr("d",path.toString());
 	path = d3.path();
 	path.moveTo((x1+pos[0]+size*Math.cos(pos[2]))/2., (y1+pos[1]+size*Math.sin(pos[2]))/2.);
 	path.lineTo(x1,y1);
-	d3.select("#navigationPlot").select("#path_pos_3").attr("d",path.toString());
+	d3.select("#navigationPlot").select("#"+label+"_3").attr("d",path.toString());
 }
 
 function send_pos(x,y)
@@ -127,7 +127,7 @@ function setupPathElements() {
 				  .attr("id", "path_plan")
 				  .attr("d", d3.path().toString())
 				  .attr("stroke", PATH_COLOR)
-				  .attr("stroke-width", 1)
+				  .attr("stroke-width", 2)
 				  .attr("fill", "none");
 
 	//Position arrow
@@ -149,6 +149,25 @@ function setupPathElements() {
 				  .attr("stroke", "blue")
 				  .attr("stroke-width", 2)
 				  .attr("fill", "none");
+	//Position arrow
+	svg.append("path")
+				  .attr("id", "path_target_1")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", "green")
+				  .attr("stroke-width", 2)
+				  .attr("fill", "none");
+	svg.append("path")
+				  .attr("id", "path_target_2")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", "green")
+				  .attr("stroke-width", 2)
+				  .attr("fill", "none");
+	svg.append("path")
+				  .attr("id", "path_target_3")
+				  .attr("d", d3.path().toString())
+				  .attr("stroke", "green")
+				  .attr("stroke-width", 2)
+				  .attr("fill", "none");
 	
 	
 	return svg;
@@ -159,13 +178,16 @@ function setupPathElements() {
 function updateConnection(svgElement) {
 	try {
 		obsData = $.get(OBS_URL, function(rawData) {
-			var a=JSON.parse(rawData)
+			var a=JSON.parse(rawData);
 			updateMap(a.data);
-			updatePos(a.position);
+			updatePos(a.position,"path_pos");
 		})
 		console.log("Fetching data from the server...");
 		parsedData = $.get(PATH_URL, function(rawData) {
-			updatePath(JSON.parse(rawData).data);
+			var a=JSON.parse(rawData);
+			updatePath(a.data);
+			updatePos(a.position,"path_pos");
+			updatePos(a.target,"path_target");
 		});
 
 		//var time = new Date();
