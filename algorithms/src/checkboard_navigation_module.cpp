@@ -158,7 +158,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 	SerialStream file; // serial port
 	
 	while(1){
-	    file.Open("/dev/ttyACM0");
+	    file.Open("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_7543931333735160E081-if00"); //("/dev/ttyACM0");
 	    if (file.IsOpen()) {
 	        break;
 	    }

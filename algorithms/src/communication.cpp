@@ -17,7 +17,7 @@
 
 using namespace std;
 
-char * motor_port=(char*)"/dev/ttyACM1";
+char * motor_port=(char*)"/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0";
 
 void* communication(void * unused)
 {
