@@ -484,8 +484,9 @@ void *connection_handler(void * pointer)
         {
             sleep(0.1);
         }
-
+        std::string output;
         deflate_string(map_json,output);
+        
         const char * html = output.c_str();
         
         message = "HTTP/1.1 200 OK\r\n"
