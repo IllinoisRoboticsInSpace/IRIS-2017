@@ -54,13 +54,17 @@ volatile int control_direction=1;
 bool collision_checker_f(double x, double y, double theta){
     int robotCellHalfWidth = 75/5./2.;
     int robotCellHalfHeight = 150/5./2.;
+    int count =0;
+    int threshold=robotCellHalfWidth*robotCellHalfHeight*.1;
     for (int robotX=-robotCellHalfWidth; robotX<=robotCellHalfWidth; ++robotX){
         for (int robotY=-robotCellHalfWidth; robotY<=robotCellHalfWidth; ++robotY){
             Vec2f point(robotX,robotY);
             point = MapTransformer::rotate_point(point,theta);
             point = MapTransformer::translate_point(point,x,y);
             if (pathplan_map.validIndex((int) point.x, (int) point.y) && pathplan_map((int) point.x, (int) point.y)==map_occupied){
-                return false;
+                count++;
+                if (count>threshold)
+                    return false;
             }
         }
     }
