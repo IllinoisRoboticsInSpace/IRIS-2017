@@ -34,7 +34,7 @@ const double K_TURN_CONTROL = 180;
 //Global variables
 volatile double goal_x=0.;
 volatile double goal_y=0.;
-volatile double goal_t=0.;
+volatile double goal_t=M_PI;
 extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1, BACKWARDS = -2};
