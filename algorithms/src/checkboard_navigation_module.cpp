@@ -367,7 +367,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     if (long_turn || abs(delta) > 1)
                     {
                         long int t = millis();
-                        while (millis() - t < (long_turn ? 3000 : 200))
+                        while (millis() - t < (long_turn ? 3000 : 100))
                              nextImage(inputCapture, view);
                     }
 
@@ -401,7 +401,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
                     long int t = millis();
-                    while (millis() - t < 300)
+                    while (millis() - t < 100)
                          nextImage(inputCapture, view);
                     count_lost = 8;
                 }

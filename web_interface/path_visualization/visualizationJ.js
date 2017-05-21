@@ -91,7 +91,7 @@ function updatePos(pos,label) {
 function send_pos(x,y)
 {
 	$.get(POS_URL+"?x="+x+"&y="+y+"&t=3.1415926", function(rawData) {
-			alert(rawData);
+			console.log(rawData);
 		})
 }
 
