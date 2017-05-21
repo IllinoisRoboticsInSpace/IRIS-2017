@@ -52,8 +52,8 @@ volatile int control_direction=1;
 * @return false if the robot will collide, true otherwise.
 */
 bool collision_checker_f(double x, double y, double theta){
-    int robotCellHalfWidth = 10;
-    int robotCellHalfHeight = 10;
+    int robotCellHalfWidth = 75/5./2.;
+    int robotCellHalfHeight = 150/5./2.;
     for (int robotX=-robotCellHalfWidth; robotX<=robotCellHalfWidth; ++robotX){
         for (int robotY=-robotCellHalfWidth; robotY<=robotCellHalfWidth; ++robotY){
             Vec2f point(robotX,robotY);
