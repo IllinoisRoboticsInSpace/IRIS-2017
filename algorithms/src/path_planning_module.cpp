@@ -151,7 +151,8 @@ void* path_planning(void* unused)
                 }
                 
                 //finish string
-                positionsString += "]}";
+                positionsString += "],\"position\":["+std::to_string((int)pos.x)+".0,"+std::to_string((int)pos.y)+".0,"+std::to_string(pos.t)+
+                        "],\"target\":["+std::to_string((int)goal_x)+".0,"+std::to_string((int)goal_y)+".0,"+std::to_string(goal_t)+"]}";
                 
                 // this is the semaphore
                 //when false debug_ip_server is controlling positionsString

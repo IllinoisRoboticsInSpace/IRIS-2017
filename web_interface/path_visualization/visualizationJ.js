@@ -197,5 +197,5 @@ window.onload = function() {
 	//Set the interval timer
 	var timer = setInterval(function() {
 		updateConnection(svgElement);},
-		300);
+		800);
 }
