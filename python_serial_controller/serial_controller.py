@@ -14,6 +14,7 @@ import socket
 import sys
 import os
 import serial
+import glob
 
 def connection_handler(connection,callback):
     connection.setblocking(0)
@@ -195,9 +196,15 @@ def serial_connect(old_serial):
         pass
     #try forever
     while True:
-        for port in serial_connect.ports:
-            print >>sys.stderr, 'serial_connect: trying ',port
+        for portg in serial_connect.ports:
             try:
+	        print >>sys.stderr, 'serial_connect: trying ',portg
+                try:
+	            port=glob.glob(portg)[0]
+                except:
+                    raise Exception('No ports found in %s'%portg)
+                print >>sys.stderr, 'serial_connect: found ',port
+            
                 if serial_connect.maxon:
                     s=serial.Serial(port, 115200, bytesize=serial.EIGHTBITS,
                              parity=serial.PARITY_NONE,

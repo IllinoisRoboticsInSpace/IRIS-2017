@@ -29,6 +29,8 @@ int get_angle(){
 	  while(1){
 		while(!Serial.available());
 		ByteReceived = Serial.read();
+                Serial.write(ByteReceived);
+                Serial.write('\n');
 		if(ByteReceived<'0' || ByteReceived>'9') break;
 		readchars++;
 		angle=angle*10+ByteReceived-'0';
