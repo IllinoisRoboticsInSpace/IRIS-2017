@@ -70,7 +70,7 @@ void setup()
 //        );
         
     //Serial communications
-    Serial.begin(115200);               //ODroid Serial
+    Serial.begin(9600);               //ODroid Serial
     Serial.setTimeout(0);  // never wait for anything
 //    Serial1.begin(115200);              //Roboteq Serial
 
@@ -93,7 +93,7 @@ void loop()
     bool data = false; //Checks if Data ends and is valid.
     String str; //input from the serial
     //Robot Status
-    float check[4]; //checks if message is valid
+    int check[4]; //checks if message is valid
     
     //Wait for data to arrive (Format: "collect_linear_act,bin_linear_act,webcam_linear_act,servo_degrees#!")
     // 0,0,0,000#!
@@ -187,9 +187,9 @@ void loop()
         //Update the robot status
         //Format: "disp_act, collection_act, webcam_act"
         
-        check[0] = str[disp_ind];//'0'?0:(str[disp_ind]=='1'?1:2);
-        check[1] = str[collection_ind];//=='0'?0:(str[collection_ind]=='1'?1:2);
-        check[2] = str[web_act_ind];//=='0'?0:(str[web_act_ind]=='1'?1:2);
+        check[1] = str[disp_ind]=='0'?0:(str[disp_ind]=='1'?1:2);
+        check[0] = str[collection_ind]=='0'?0:(str[collection_ind]=='1'?1:2);
+        check[2] = str[web_act_ind]=='0'?0:(str[web_act_ind]=='1'?1:2);
         
         check[3] = pos;
     
