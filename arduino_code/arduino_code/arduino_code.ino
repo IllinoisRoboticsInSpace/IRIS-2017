@@ -2,28 +2,36 @@
 #include "pwm_actuator.h"
 #include "iris_pinout.h"
 #include "stepper_pulse.h"
-#include "FreeSixIMU.h"
+#include <Servo.h>
+
+//#include "FreeSixIMU.h"
  
 //Call the constructors
-pwm_actuator collect_rotating = pwm_actuator();
+pwm_actuator webcam_linear = pwm_actuator();
 pwm_actuator bin_linear = pwm_actuator();
 pwm_actuator collect_linear = pwm_actuator();
-FreeSixIMU imu = FreeSixIMU();
-stepper_pulse webcam_stepper = stepper_pulse();
+
+Servo webcam_servo;
+
+int pos = 0;
+//FreeSixIMU imu = FreeSixIMU();
+//stepper_pulse webcam_stepper = stepper_pulse();
 
 void update_time_critical()
 {
     //Update servos
-    webcam_stepper.update_pulses(); //send remaining servo pulses
-    //Update IMU
-    imu.getQ(0); // give null pointer, just to force calculation, no need for values
+//    webcam_stepper.update_pulses(); //send remaining servo pulses
+    //Update IMU/ Not implemented yet
+    //imu.getQ(0); // give null pointer, just to force calculation, no need for values
 }
+
 
 void setup()
 {
+    webcam_servo.attach(SERVO_PULSE);
     //Maxon pinout
     pinMode(MAXON_BRAKE, OUTPUT); //unset brake
-    collect_rotating.init(
+    webcam_linear.init(
         MAXON_SPEED, MAXON_DIR, MAXON_ENABLE, //pins
         0, // extend_speed (forward)
         192, // retract_speedint (backwards)
@@ -56,21 +64,21 @@ void setup()
     pinMode(ARM_CURRENT, INPUT);
     
     //Webcam stepper motor
-    webcam_stepper.init(
-        SERVO_DIR, SERVO_PULSE, //pins
-        25  // interval millisecond (between pulses)
-        );
+//    webcam_stepper.init(
+//        SERVO_DIR, SERVO_PULSE, //pins
+//        25  // interval millisecond (between pulses)
+//        );
         
     //Serial communications
-    Serial.begin(115200);               //ODroid Serial
+    Serial.begin(9600);               //ODroid Serial
     Serial.setTimeout(0);  // never wait for anything
-    Serial1.begin(115200);              //Roboteq Serial
+//    Serial1.begin(115200);              //Roboteq Serial
 
     //I2C communications
     Wire.begin();
 
     //Initialize IMU
-    imu.init();  
+    //imu.init();  
 
     Serial.println("Ready");
 }
@@ -78,26 +86,26 @@ void setup()
 void loop()
 {
     //input handling
-    int commaIdx[5];
+    int commaIdx[3];
     int idx_start = 0;
     int idx_end = 0;
     int idx = 0;
-    bool data = false;
-    String str;
+    bool data = false; //Checks if Data ends and is valid.
+    String str; //input from the serial
     //Robot Status
-    float pose[10];
+    int check[4]; //checks if message is valid
     
-    //Wait for data to arrive (Format: "motor_left,motor_right,collect_linear_act,bin_linear_act,collect_rotating,servo_degrees#!")
-    // 0,0,0,0,0,0#!
+    //Wait for data to arrive (Format: "collect_linear_act,bin_linear_act,webcam_linear_act,servo_degrees#!")
+    // 0,0,0,000#!
     while(Serial.available() > 0)
     {
         str = "";
         int c=Serial.read(); // get next char
         while(c!='!')
         {
-            if(c>0) // check valid read
+            if(c>0) // check valid readf
                 str += (char) c; // append to string
-            update_time_critical();
+            //update_time_critical();
             c=Serial.read(); // get next char
         }
         idx_start = 0;
@@ -116,116 +124,84 @@ void loop()
         commaIdx[0] = str.indexOf(',', idx_start);
         commaIdx[1] = str.indexOf(',', commaIdx[0]+1);
         commaIdx[2] = str.indexOf(',', commaIdx[1]+1);
-        commaIdx[3] = str.indexOf(',', commaIdx[2]+1);
-        commaIdx[4] = str.indexOf(',', commaIdx[3]+1);
 
-        //Handle motor commands
-        String temp_str = roboteq_string(
-            str.substring(commaIdx[0]+1, commaIdx[1]), //speed R
-            str.substring(idx_start, commaIdx[0])  //speed L
-            );
-        Serial1.write(temp_str.c_str(), temp_str.length());
-        Serial1.flush();
+                
+        int disp_ind = commaIdx[0] +1;
+        int collection_ind = 0;
+        int web_act_ind = commaIdx[1] +1;
+        int servo_ind = commaIdx[2]+1;
+
         
-        update_time_critical();
+        //update_time_critical();
         
         //Handle collection LA commands
-        if(str[commaIdx[1]+1] == '0')
+        if(str[collection_ind] == '0')
         {
             int dist = analogRead(A14);
-            /*//Potentiometer stop check
-            if(dist > 190)
-            {
-                collect_linear.stop(); //Actuator fully extended
-            }
-            else
-            {
-                collect_linear.extend();
-            }*/
             collect_linear.extend();
 
         }
-        else if(str[commaIdx[1]+1] == '1')
+        else if(str[collection_ind] == '1')
         {
             collect_linear.stop();
         }
-        else if(str[commaIdx[1]+1] == '2')
+        else if(str[collection_ind] == '2')
         {
             int dist = analogRead(A14);
-            /*//Potentiometer stop check
-            if(dist < 140)
-            {
-                collect_linear.stop();
-            }
-            else
-            {
-                collect_linear.retract();
-            }*/
             collect_linear.retract();
         }
 
         //Handle bin LA commands
-        if(str[commaIdx[2]+1] == '0')
+        if(str[disp_ind] == '0')
         {
-            /*//Potentiometer stop check
-            if(analogRead(A0) < 100) //end switch beign pushed
-            {
-                bin_linear.stop();
-            }
-            else
-            {
-                bin_linear.retract();
-            }*/
             bin_linear.retract();
         }
-        else if(str[commaIdx[2]+1] == '1')
+        else if(str[disp_ind] == '1')
         {
             bin_linear.stop();
         }
-        else if(str[commaIdx[2]+1] == '2')
+        else if(str[disp_ind] == '2')
         {
             bin_linear.extend();
         }
 
-        //Handle collection rotating commands
-        if(str[commaIdx[3]+1] == '1')
+        //Handle webcam Actuator commands
+        if(str[web_act_ind] == '0')
         {
-            collect_rotating.backwards();
+            bin_linear.retract();
         }
-        else
+        else if(str[web_act_ind] == '1')
         {
-            collect_rotating.stop();
+            bin_linear.stop();
+        }
+        else if(str[web_act_ind] == '2')
+        {
+            bin_linear.extend();
         }
         
         //Handle Servo
-        update_time_critical();
-        if(commaIdx[4]!=-1) //silently skip if not provided: compatible with old data format
-        {
-            webcam_stepper.setTarget(str.substring(commaIdx[4]+1, idx_end-1).toFloat());
-        }
+        pos = (str.substring(servo_ind, str.length())).toInt();
+        webcam_servo.write(pos);
 
 
         //Update the robot status
-        //Format: "x, y, theta, x_error, y_error, theta_error, v_x, v_theta, disp_act, turbine_act, maxon"
-        imu.getEuler(pose); //Get IMU data //fills pose[0] pose[1] pose[2]
-        pose[3] = webcam_stepper.getCurrent();
-        pose[4] = webcam_stepper.getMoving()?1:0;
-        pose[5] = 0;
-        pose[6] = 0;
-        pose[7] = str[commaIdx[2]+1]=='0'?0:(str[commaIdx[2]+1]=='1'?1:2);
-        pose[8] = str[commaIdx[1]+1]=='0'?0:(str[commaIdx[1]+1]=='1'?1:2);
-        pose[9] = str[commaIdx[3]+1]=='0'?0:(str[commaIdx[3]+1]=='1'?1:2);
+        //Format: "disp_act, collection_act, webcam_act"
+        
+        check[1] = str[disp_ind]=='0'?0:(str[disp_ind]=='1'?1:2);
+        check[0] = str[collection_ind]=='0'?0:(str[collection_ind]=='1'?1:2);
+        check[2] = str[web_act_ind]=='0'?0:(str[web_act_ind]=='1'?1:2);
+        
+        check[3] = pos;
     
         //Create the string to send
         String status_str;
-        for(int i=0;i<10;i++)
+        for(int i=0;i<4;i++)
         {
           status_str += i?",":"";
-          status_str += String(pose[i]);
+          status_str += String(check[i]);
         }
         status_str += "#!\n";
         Serial.write(status_str.c_str(), status_str.length());
         Serial.flush();
     }
-    update_time_critical();
 }
