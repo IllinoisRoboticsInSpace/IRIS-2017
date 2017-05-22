@@ -14,6 +14,7 @@ import socket
 import sys
 import os
 import serial
+import glob
 
 def connection_handler(connection,callback):
     connection.setblocking(0)
@@ -236,7 +237,7 @@ if __name__ == '__main__':
     callback.serial=serial_connect(None)
     while True:
         try:
-            start_tcp_server(callback,args.tcpport)
+            start_tcp_server(callback,glob.glob(args.tcpport)[0])
         except Exception as e:
             print >>sys.stderr, '******** EXCEPTION: setting up server: ',str(e)
         print >>sys.stderr, 'server: retrying ... '
