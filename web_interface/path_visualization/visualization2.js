@@ -152,10 +152,11 @@ window.onload = function() {
 	//Set the interval timer
 	var timer = setInterval(function() {
 		updateConnection(svgElement);},
-		3000);
+		1500);
 }
 
 $(document).ready(function(){
+	//setInterval(function(){updateConnection(svgElement)}; , 300)
     $("#navigationPlot").click(function(e){
    var parentOffset = $(this).offset(); 
    //or $(this).offset(); if you really just want the current element's offset

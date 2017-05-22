@@ -78,9 +78,11 @@ body{
     border-right: 1px solid #888;
 }
 #navigationPlot{
-    height: 560px;
+    height: 540px;
     max-width: 480px;
     background-color: #ff8c40;
+    background-repeat: no-repeat;
+    background-size:100%;
 }
 
 .telemetry-container{

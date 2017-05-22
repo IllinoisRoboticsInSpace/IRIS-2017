@@ -197,7 +197,7 @@ def serial_connect(old_serial):
     #try forever
     while True:
         for port in serial_connect.ports:
-            print >>sys.stderr, 'serial_connect: trying ',port
+            print >>sys.stderr, 'serial_connect: trying ',glob.glob(port)[0]
             try:
                 if serial_connect.maxon:
                     s=serial.Serial(port, 115200, bytesize=serial.EIGHTBITS,
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     callback.serial=serial_connect(None)
     while True:
         try:
-            start_tcp_server(callback,glob.glob(args.tcpport)[0])
+            start_tcp_server(callback,args.tcpport)
         except Exception as e:
             print >>sys.stderr, '******** EXCEPTION: setting up server: ',str(e)
         print >>sys.stderr, 'server: retrying ... '
