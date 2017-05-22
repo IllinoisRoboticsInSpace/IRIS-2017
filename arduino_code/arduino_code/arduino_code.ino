@@ -8,8 +8,9 @@
  
 //Call the constructors
 pwm_actuator webcam_linear = pwm_actuator();
-pwm_actuator bin_linear = pwm_actuator();
+pwm_actuator bin_linearL = pwm_actuator();
 pwm_actuator collect_linear = pwm_actuator();
+pwm_actuator bin_linearR = pwm_actuator();
 
 Servo webcam_servo;
 
@@ -29,28 +30,33 @@ void update_time_critical()
 void setup()
 {
     webcam_servo.attach(SERVO_PULSE);
+    
     //Maxon pinout
     pinMode(MAXON_BRAKE, OUTPUT); //unset brake
     webcam_linear.init(
-        MAXON_SPEED, MAXON_DIR, MAXON_ENABLE, //pins
+        MAXON_SPEED, MAXON_DIR, MAXON_BRAKE, //pins
         0, // extend_speed (forward)
         192, // retract_speedint (backwards)
-        1 //brake_negate (enable negate)
+        0 //brake_negate (enable negate)
         );
-    pinMode(MAXON_HALL, INPUT);
 
     //Dispensation LA pinout
-    bin_linear.init(
+    bin_linearL.init(
         DISP_SPEED, DISP_DIR, DISP_BRAKE, //pins
         194, // extend_speed (forward)
         194, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
-    pinMode(DISP_THERMAL, INPUT);
-    pinMode(DISP_HALL, INPUT);
-    pinMode(DISP_POT, INPUT);
-    pinMode(DISP_CURRENT, INPUT);
-    digitalWrite(A0, HIGH);             //Set the pullup resistor
+    digitalWrite(A0, HIGH);
+
+    //TODO FIX PINS
+    bin_linearR.init(
+        DISP_SPEED, DISP_DIR, DISP_BRAKE, //pins
+        194, // extend_speed (forward)
+        194, // retract_speedint (backwards)
+        0 //brake_negate (enable negate)
+        );
+    digitalWrite(A0, HIGH); //Set the pullup resistor
 
     //Paddle LA pinout
     collect_linear.init(
@@ -59,15 +65,7 @@ void setup()
         127, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
-    pinMode(ARM_THERMAL, INPUT);
-    pinMode(ARM_POT, INPUT);
-    pinMode(ARM_CURRENT, INPUT);
     
-    //Webcam stepper motor
-//    webcam_stepper.init(
-//        SERVO_DIR, SERVO_PULSE, //pins
-//        25  // interval millisecond (between pulses)
-//        );
         
     //Serial communications
     Serial.begin(9600);               //ODroid Serial
@@ -154,29 +152,32 @@ void loop()
         //Handle bin LA commands
         if(str[disp_ind] == '0')
         {
-            bin_linear.retract();
+            bin_linearL.retract();
+            bin_linearR.retract();
         }
         else if(str[disp_ind] == '1')
         {
-            bin_linear.stop();
+            bin_linearL.stop();
+            bin_linearR.stop();
         }
         else if(str[disp_ind] == '2')
         {
-            bin_linear.extend();
+            bin_linearL.extend();
+            bin_linearR.extend();
         }
 
         //Handle webcam Actuator commands
         if(str[web_act_ind] == '0')
         {
-            bin_linear.retract();
+            webcam_linear.retract();
         }
         else if(str[web_act_ind] == '1')
         {
-            bin_linear.stop();
+            webcam_linear.stop();
         }
         else if(str[web_act_ind] == '2')
         {
-            bin_linear.extend();
+            webcam_linear.extend();
         }
         
         //Handle Servo
