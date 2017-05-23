@@ -2,7 +2,7 @@
 
 //Bin linear actuator Left
 #define DISP_SPEEDL 		4	// Pins
-#define DISP_DIRL 		53
+#define DISP_DIRL 		49
 #define DISP_BRAKEL 		51
 
 //Bin linear actuator Right
