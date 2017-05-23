@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Copyright Drew Noakes 2013-2016
+// Based on Drew Noakes 2013-2016
 
 #include "joystick.hh"
 #include <unistd.h>
@@ -26,7 +26,7 @@ using namespace std::chrono;
 int main(int argc, char** argv)
 {
   // Create an instance of Joystick
-  Joystick joystick("/dev/input/js0");
+  Joystick joystick("/dev/input/js1");
 
   // Ensure that it was found and that we can use it
   if (!joystick.isFound())
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     exit(1);
   }
 
-  int last_left=0, last_right=0, uncapped=0;
+  int last_left=0, last_right=0, uncapped=0, bin_button=1, cam_button=1, coll_button=1 ;
   auto start = high_resolution_clock::now();
   while (true)
   {
@@ -49,10 +49,23 @@ int main(int argc, char** argv)
       if (event.isButton())
       {
         //printf("Button %u is %s\n",
-        //  event.number,
-        //  event.value == 0 ? "up" : "down");
+          //event.number,
+          //event.value == 0 ? "up" : "down");
+        //A=0;B=1;X=2;Y=3;
         if(event.number==5)
-			uncapped=event.value!=0?1:0;
+          uncapped=event.value!=0?1:0;
+        if(event.number==0)//A
+          bin_button=event.value!=0?0:1;
+        if(event.number==1)//B
+          bin_button=event.value!=0?2:1;
+        if(event.number==2)//X
+          coll_button=event.value!=0?0:1;
+        if(event.number==3)//Y
+          coll_button=event.value!=0?2:1;
+        if(event.number==6)//Back
+          cam_button=event.value!=0?0:1;
+        if(event.number==7)//Start
+          cam_button=event.value!=0?2:1;
       }
       else if (event.isAxis())
       {
@@ -64,13 +77,14 @@ int main(int argc, char** argv)
 			last_right=max(-1000.,min(1000.,-abb/(uncapped?25:50)));
       }
     }
-   auto curr = high_resolution_clock::now();
-   auto diff = curr-start;
+    auto curr = high_resolution_clock::now();
+    auto diff = curr-start;
 
-   if(diff>=milliseconds(50)){
-   printf("!G 1 %d_!G 2 %d_\n",last_left,-last_right);
-   fflush(stdout);
-   start= curr;
-}
+    if(diff>=milliseconds(50)){
+       //printf("!G 1 %d_!G 2 %d_\n",last_left,-last_right);
+       printf("!%d,%d,%d,%d,%d\n",last_left,-last_right,bin_button, cam_button, coll_button);
+       fflush(stdout);
+       start= curr;
+    }
   }
 }
