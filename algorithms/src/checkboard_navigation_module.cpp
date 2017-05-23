@@ -170,7 +170,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 	file.SetBaudRate(SerialStreamBuf::BAUD_9600);
     
     char c_temp[100];
-    sprintf(c_temp, "%d\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
+    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
     file.write(c_temp,strlen(c_temp));
     
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
@@ -345,7 +345,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
+                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
@@ -396,7 +396,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     
                    
                     char c_temp[100];
-                    sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
+                    //sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale));
+                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
                     file.write(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
