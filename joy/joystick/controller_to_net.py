@@ -32,6 +32,7 @@ if __name__ == '__main__':
     while 1:
         line=sys.stdin.readline()[:-1]
         if line[0]=='!':
+            line=line[1:]
             data=line.split(',')
             print('received %s'%data)
             c='!G 1 %s_!G 2 %s_\n'%tuple(data[0:2])

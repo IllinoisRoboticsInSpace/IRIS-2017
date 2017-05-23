@@ -1,19 +1,19 @@
 //PIN configuration table
 
 //Bin linear actuator Left
-#define DISP_SPEEDL 		45	// Pins
-#define DISP_DIRL 		47
-#define DISP_BRAKEL 		49
+#define DISP_SPEEDL 		4	// Pins
+#define DISP_DIRL 		53
+#define DISP_BRAKEL 		51
 
 //Bin linear actuator Right
-#define DISP_SPEEDR     5  // Pins
-#define DISP_DIRR    7
-#define DISP_BRAKER    6
+#define DISP_SPEEDR    6   // Pins
+#define DISP_DIRR   52 
+#define DISP_BRAKER  50  
 
 //Collection linear actuator
-#define ARM_SPEED 	44		// Pins
-#define ARM_DIR 	48
-#define ARM_BRAKE 	50
+#define ARM_SPEED 	5 		// Pins
+#define ARM_DIR 	22 
+#define ARM_BRAKE 	24 
 
 //Collection Webcam Linear 
 #define MAXON_SPEED 	13	// Pins
