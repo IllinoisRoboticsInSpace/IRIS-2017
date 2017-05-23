@@ -35,34 +35,34 @@ void setup()
     pinMode(MAXON_BRAKE, OUTPUT); //unset brake
     webcam_linear.init(
         MAXON_SPEED, MAXON_DIR, MAXON_BRAKE, //pins
-        0, // extend_speed (forward)
-        192, // retract_speedint (backwards)
+        127, // extend_speed (forward)
+        127, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
 
     //Dispensation LA pinout
     bin_linearL.init(
-        DISP_SPEED, DISP_DIR, DISP_BRAKE, //pins
+        DISP_SPEEDL, DISP_DIRL, DISP_BRAKEL, //pins
         194, // extend_speed (forward)
         194, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
-    digitalWrite(A0, HIGH);
+    //digitalWrite(A0, HIGH);
 
     //TODO FIX PINS
     bin_linearR.init(
-        DISP_SPEED, DISP_DIR, DISP_BRAKE, //pins
+        DISP_SPEEDR, DISP_DIRR, DISP_BRAKER, //pins
         194, // extend_speed (forward)
         194, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
-    digitalWrite(A0, HIGH); //Set the pullup resistor
+    //digitalWrite(A0, HIGH); //Set the pullup resistor
 
     //Paddle LA pinout
     collect_linear.init(
         ARM_SPEED, ARM_DIR, ARM_BRAKE, //pins
-        127, // extend_speed (forward)
-        127, // retract_speedint (backwards)
+        194, // extend_speed (forward)
+        194, // retract_speedint (backwards)
         0 //brake_negate (enable negate)
         );
     
@@ -135,7 +135,7 @@ void loop()
         //Handle collection LA commands
         if(str[collection_ind] == '0')
         {
-            int dist = analogRead(A14);
+            //int dist = analogRead(A14);
             collect_linear.extend();
 
         }
@@ -145,7 +145,7 @@ void loop()
         }
         else if(str[collection_ind] == '2')
         {
-            int dist = analogRead(A14);
+            //int dist = analogRead(A14);
             collect_linear.retract();
         }
 

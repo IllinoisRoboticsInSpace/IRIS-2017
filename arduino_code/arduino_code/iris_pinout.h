@@ -1,14 +1,14 @@
 //PIN configuration table
 
 //Bin linear actuator Left
-#define DISP_SPEED 		45	// Pins
-#define DISP_DIR 		47
-#define DISP_BRAKE 		49
+#define DISP_SPEEDL 		45	// Pins
+#define DISP_DIRL 		47
+#define DISP_BRAKEL 		49
 
 //Bin linear actuator Right
-#define DISP_SPEED     5  // Pins
-#define DISP_DIR    7
-#define DISP_BRAKE    6
+#define DISP_SPEEDR     5  // Pins
+#define DISP_DIRR    7
+#define DISP_BRAKER    6
 
 //Collection linear actuator
 #define ARM_SPEED 	44		// Pins
