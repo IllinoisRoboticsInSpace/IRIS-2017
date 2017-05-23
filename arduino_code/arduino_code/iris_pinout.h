@@ -11,7 +11,7 @@
 #define DISP_BRAKER  50  
 
 //Collection linear actuator
-#define ARM_SPEED 	5 		// Pins
+#define ARM_SPEED 	7 		// Pins
 #define ARM_DIR 	22 
 #define ARM_BRAKE 	24 
 
