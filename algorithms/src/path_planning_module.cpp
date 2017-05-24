@@ -122,7 +122,7 @@ void* path_planning(void* unused)
                 //check RRT.hpp to see how this function works
                 p_forward = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
             }
-            path p_backwards
+            path p_backwards;
             if(control_direction!=FORWARD)
             {
                 //Tells where the robot starts and ends at
@@ -134,39 +134,39 @@ void* path_planning(void* unused)
                 p_backwards = RRT(path_planner_functions<collision_checker_f_prototype>( min_radius, collision_checker_f), start, end, 500, false);
             }
             
-            path &p;
+            path *p;
             
             switch(control_direction)
             {
                 case(FORWARD):
-                    p=p_forward;
+                    p=&p_forward;
                     direction=1;
                     break;
                 case(BACKWARDS):
-                    p=p_backwards;
+                    p=&p_backwards;
                     direction=-1;
                     break;
                 default:
                     if((p_forward.get_length()<p_backwards.get_length())&&p_forward.get_length()>0.)
                     {
-                        p=p_forward;
+                        p=&p_forward;
                         direction=1;
                     }
                     else
                     {
-                        p=p_backwards;
+                        p=&p_backwards;
                         direction=-1;
                     }
             }
-            if(p.get_length()==0.)
+            if(p->get_length()==0.)
             {
-                p=old_path;
+                p=&old_path;
                 direction=old_direction;
                 std::cout<<"\033[0;42m"<< "PATHPLAN: **************** error in the path *******************"<<"\033[0m\n";
                 std::cout<<"\033[0;32m"<< "PATHPLAN: Using old path"<<"\033[0m\n";
             }else
             {
-                old_path=p;
+                old_path=*p;
                 old_direction=direction;
                 std::cout<<"\033[0;32m"<< "PATHPLAN: path exists!"<<"\033[0m\n";
             }
@@ -185,7 +185,7 @@ void* path_planning(void* unused)
                 
                 //while next position is valid
                 pose2d currentPoint;
-                while (p.get_position(curveLength, currentPoint)) {
+                while (p->get_position(curveLength, currentPoint)) {
 					// start line with comma only if not first item
 					positionsString += (curveLength==0.0?"[":",[");
 					// x
@@ -214,8 +214,8 @@ void* path_planning(void* unused)
             
             pose2d point1,point2;
             if(millis()-pos.millis<2500 
-                && p.get_position(POINT1_CURVE_LENGTH, point1) 
-                && p.get_position(POINT2_CURVE_LENGTH, point2))
+                && p->get_position(POINT1_CURVE_LENGTH, point1) 
+                && p->get_position(POINT2_CURVE_LENGTH, point2))
             {
             
                 double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
