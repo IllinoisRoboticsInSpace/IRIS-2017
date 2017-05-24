@@ -18,6 +18,7 @@
 
 volatile bool positionStringIsUsed = true;
 volatile std::string positionsString;
+float goal_x,goal_y,goal_t;
 
 using namespace std;
 

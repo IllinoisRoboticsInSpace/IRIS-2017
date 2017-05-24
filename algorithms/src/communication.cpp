@@ -33,7 +33,7 @@ void* communication(void * unused)
             locate_motor desired = get_desired_motor();
             char c[100];
             sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
-            n=write(file, c, strlen(c));
+            int n=write(file, c, strlen(c));
             if(n==0)
             {
                 close(file);
