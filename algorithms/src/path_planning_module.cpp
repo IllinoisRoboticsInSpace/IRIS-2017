@@ -39,7 +39,7 @@ enum{FORWARD=1, BACKWARDS =-1, ANY_DIR=0};
 volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
-enum{RETRACT = 0, STAY = 1, DEPLOY = 2, STOP = 0, MOVE = 1};
+enum{RETRACT = 0, STAY = 1, DEPLOY = 2};
 volatile locate_actuator actuators;
 
 locate_actuator get_desired_actuator()
@@ -308,12 +308,47 @@ void* FSM(void * unused)
     double y;
     double epsilon = 100;
 
+    locate_actuator.webcam=STAY;
+    locate_actuator.collect=STAY;
+    locate_actuator.bin=STAY;
+
+
     while(1)
     {
+        //full test of the robot
+        {
+            locate_actuator.webcam=DEPLOY;
+            sleep(4);
+            locate_actuator.webcam=STAY;
+            sleep(2);
+            locate_actuator.webcam=RETRACT;
+            sleep(4);
+            locate_actuator.webcam=STAY;
+            sleep(2);
+            locate_actuator.collect=RETRACT;
+            sleep(4);
+            locate_actuator.collect=STAY;
+            sleep(2);
+            locate_actuator.collect=DEPLOY;
+            sleep(4);
+            locate_actuator.collect=STAY;
+            sleep(2);
+            locate_actuator.bin=DEPLOY;
+            sleep(4);
+            locate_actuator.bin=STAY;
+            sleep(2);
+            locate_actuator.bin=RETRACT;
+            sleep(4);
+            locate_actuator.bin=STAY;
+            sleep(2);
+        }
+        sleep(10);
+        continue;
+        
         //deploy webcam and raise collection
         locate_actuator.webcam=DEPLOY;
         locate_actuator.collect=RETRACT;
-        sleep(3)
+        sleep(3);
         locate_actuator.collect=STAY;
         sleep(2);
         locate_actuator.webcam=STAY;
@@ -361,13 +396,13 @@ void* FSM(void * unused)
         
         //Deposit
         std::cout<<"\033[0;35m"<< "PATHPLAN: deposit " <<"\033[0m\n";
-        bin_movement = DEPLOY;
+        locate_actuator.bin = DEPLOY;
         sleep(15); //~15s
-        bin_movement = STAY;
+        locate_actuator.bin = STAY;
         sleep(5); //???
-        bin_movement = RETRACT;
+        locate_actuator.bin = RETRACT;
         sleep(10); //~10-15s
-        bin_movement = STAY;
+        locate_actuator.bin = STAY;
 
         //Increment the iteration
         iter = (iter + 1) % 3;
