@@ -19,3 +19,6 @@ struct tcp_send
 private: 
 	void internal_reconnect();
 };
+
+void* communication_motor(void * unused);
+void* communication_actuators(void * unused);
