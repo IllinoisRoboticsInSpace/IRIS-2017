@@ -40,9 +40,7 @@ volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1};
-volatile int bin_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
-volatile int paddle_movement = 1; // 0=RETRACT 1=STAY 2=EXTEND
-volatile int paddle_onoff = 0; // 0=STOP 1=MOVE
+volatile locate_actuator actuators;
 
 //minimum path radious for RRT
 const double min_radius = 10;
