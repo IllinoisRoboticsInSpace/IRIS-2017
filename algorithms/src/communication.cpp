@@ -42,7 +42,7 @@ void* communication_actuators(void * unused)
         int desired_angle = get_desired_webcam();
         locate_actuator desired = get_desired_actuator();
         char c[100];
-        sprintf("!%d,%d,%d,%d#!",desired.collection,desired.bin,desired.webcam,desired_angle);
+        sprintf(c,"!%d,%d,%d,%d#!",desired.collection,desired.bin,desired.webcam,desired_angle);
         actuator_serial.send(c, strlen(c));
         sleep(.1);
 
