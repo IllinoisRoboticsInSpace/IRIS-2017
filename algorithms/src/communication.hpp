@@ -17,5 +17,5 @@ struct tcp_send
 	int receive(char* data, int size);
 
 private: 
-	void internal_reconnect;
+	void internal_reconnect();
 };
