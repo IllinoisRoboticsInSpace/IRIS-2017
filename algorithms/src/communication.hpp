@@ -14,5 +14,8 @@ struct tcp_send
 
 	tcp_send(char* _address, int _port);
 	int send(char* data, int size);
+	int receive(char* data, int size);
 
+private: 
+	void internal_reconnect;
 };
