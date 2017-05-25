@@ -60,7 +60,42 @@ int tcp_send::send(char* data, int size){
         return 0;
     }
     while(1){
-        while(sock<=0){
+
+        tcp_send::internal_reconnect();
+
+        int n = write(sock, data, size);
+        if(n<=0){
+            printf("tcp_send: ERROR write failed %s:%d \n", address,port);
+            close(sock);
+            sock = -1;
+            continue;
+        }
+        else if(n!=size){
+            return tcp_send::send(&data[n],size-n) + n;
+        }
+        return n;
+    }
+}
+
+int tcp_send::recieve(char* data, int size){
+    while(1){
+
+        tcp_send::internal_reconnect();
+
+        int n = recv(sock, data, size,0);
+
+        if(n<=0){
+            printf("tcp_send: ERROR read failed %s:%d \n", address,port);
+            close(sock);
+            sock = -1;
+            continue;
+        }
+        return n;
+    }
+}
+
+void tcp_send::internal_reconnect(){
+    while(sock<=0){
             sock = socket(AF_INET, SOCK_STREAM,0);
             if(sock==-1){
                 printf("tcp_send: ERROR socket failed\n");
@@ -82,16 +117,4 @@ int tcp_send::send(char* data, int size){
             }
             printf("tcp_send: success socket connection %s:%d \n", address,port);
         }
-        int n = write(sock, data, size);
-        if(n<=0){
-            printf("tcp_send: ERROR write failed %s:%d \n", address,port);
-            close(sock);
-            sock = -1;
-            continue;
-        }
-        else if(n!=size){
-            return tcp_send::send(&data[n],size-n) + n;
-        }
-        return n;
-    }
 }
