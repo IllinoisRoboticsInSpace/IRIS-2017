@@ -49,6 +49,7 @@ int tcp_send::send(char* data, int size){
         while(sock<=0){
             sock = sokcet(AF_INET, SOCK_STREAM,0);
             if(sock==-1){
+                printf("tcp_send: ERROR socket failed\n");
                 continue;
             }
             struct hostent *server;
@@ -59,13 +60,16 @@ int tcp_send::send(char* data, int size){
             serv_addr.sin_port = htons(port);
             int r = connect(sock,(struct sockaddr *)&serv_addr,sizeof(serv_addr));
             if(r==-1){
+                printf("tcp_send: ERROR connect failed: %s:%d\n", address,port);
                 close(sock);
                 sock = -1;
                 continue;
             }
+            printf("tcp_send: success socket connection %s:%d \n", address,port);
         }
         int n = write(sock, data, size);
         if(n<=0){
+            printf("tcp_send: ERROR write failed %s:%d \n", address,port);
             close(sock);
             sock = -1;
             continue;
