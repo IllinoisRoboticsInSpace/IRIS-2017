@@ -8,6 +8,7 @@
 
 #include "checkboard_navigation_module.h"
 #include "data_structure.hpp"
+#include "communication.hpp"
 
 using namespace std;
 
