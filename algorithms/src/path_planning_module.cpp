@@ -40,7 +40,7 @@ volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
 enum{RETRACT = 0, STAY = 1, DEPLOY = 2};
-volatile locate_actuator actuators;
+locate_actuator actuators;
 
 locate_actuator get_desired_actuator()
 {
