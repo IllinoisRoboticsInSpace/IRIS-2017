@@ -19,6 +19,7 @@
 //0//#include <ros/ros.h>
 //0//#include <std_msgs/Float32.h>
 #include "data_structure.hpp"
+#include "communication.hpp"
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 # define _CRT_SECURE_NO_WARNINGS
@@ -152,26 +153,12 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
     int camera_id = 1;
     VideoCapture inputCapture;
-    namedWindow("Image View");
     
-    
-	SerialStream file; // serial port
-	
-	while(1){
-	    file.Open("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_7543931333735160E081-if00"); //("/dev/ttyACM0");
-	    if (file.IsOpen()) {
-	        break;
-	    }
-	    else {
-	        cout << "NO TERMINAL ON ACM0/ACM1";
-	    }
-		sleep(10);
-	}
-	file.SetBaudRate(SerialStreamBuf::BAUD_9600);
+    tcp_send webcam_serial((char*)"localhost", 9001);
     
     char c_temp[100];
-    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
-    file.write(c_temp,strlen(c_temp));
+    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees               
+    webcam_serial.send(c_temp,strlen(c_temp));
     
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
@@ -345,8 +332,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                   //  if (adjusted180 > 180)
                   //      adjusted180 = 180 - ((int)webcam_angle%180);
                     char c_temp[100];
-                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees                    file.write(c_temp,strlen(c_temp));
-                    file.write(c_temp,strlen(c_temp));
+                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees       
+                    webcam_serial.send(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
                     double vehicle_angle = -fmod2pi((webcam_angle-90-20)*M_PI / 180. - atan2(y, x) - M_PI)+M_PI*2.;
@@ -398,7 +385,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     char c_temp[100];
                     //sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale));
                     sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
-                    file.write(c_temp,strlen(c_temp));
+                    webcam_serial.send(c_temp,strlen(c_temp));
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
                     long int t = millis();

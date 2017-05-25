@@ -9,20 +9,20 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h> 
 //#include "checkboard_navigation_module.h"
 //#include "data_structure.hpp"
 //#include <ros/ros.h>
 //#include "std_msgs/String.h"
-#include <sstream>
 
 using namespace std;
 
-char * motor_address=(char*)"localhost";
-int motor_port = 9002;
-
 void* communication(void * unused)
 {
-    tcp_send motor_serial(motor_address,motor_port);
+    tcp_send motor_serial((char*)"localhost",9002);
     while(1)
     {
         locate_motor desired = get_desired_motor();
