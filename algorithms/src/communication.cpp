@@ -47,13 +47,13 @@ int tcp_send::send(char* data, int size){
     }
     while(1){
         while(sock<=0){
-            sock = sokcet(AF_INET, SOCK_STREAM,0);
+            sock = socket(AF_INET, SOCK_STREAM,0);
             if(sock==-1){
                 printf("tcp_send: ERROR socket failed\n");
                 continue;
             }
-            struct hostent *server;
-            server = gethostbyname(address);
+            struct hostent *serv_addr;
+            serv_addr = gethostbyname(address);
             bzero((char *) &serv_addr, sizeof(serv_addr));
             serv_addr.sin_family = AF_INET;
             bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
