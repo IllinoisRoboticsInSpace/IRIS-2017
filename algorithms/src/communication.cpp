@@ -27,7 +27,7 @@ void* communication_motor(void * unused)
     {
         locate_motor desired = get_desired_motor();
         char c[100];
-        sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
+        sprintf(c, "!G 1 %d_!G 2 %d_\n",desired.motor_left,desired.motor_right);
         motor_serial.send(c, strlen(c));
         sleep(.1);
 
@@ -42,7 +42,7 @@ void* communication_actuators(void * unused)
         int desired_angle = get_desired_webcam();
         locate_actuator desired = get_desired_actuator();
         char c[100];
-        sprintf(c,"!%d,%d,%d,%d#!",desired.collection,desired.bin,desired.webcam,desired_angle);
+        sprintf(c,"!%d,%d,%d,%d#!\n",desired.collection,desired.bin,desired.webcam,desired_angle);
         actuator_serial.send(c, strlen(c));
         sleep(.1);
 
