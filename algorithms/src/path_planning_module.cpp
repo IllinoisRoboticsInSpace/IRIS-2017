@@ -39,8 +39,13 @@ enum{FORWARD=1, BACKWARDS =-1, ANY_DIR=0};
 volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
-enum{RETRACT = 0, STAY = 1, EXTEND = 2, STOP = 0, MOVE = 1};
+enum{RETRACT = 0, STAY = 1, DEPLOY = 2, STOP = 0, MOVE = 1};
 volatile locate_actuator actuators;
+
+locate_actuator get_desired_actuator()
+{
+    return actuators;
+}
 
 //minimum path radious for RRT
 const double min_radius = 10;
@@ -284,8 +289,8 @@ void wait_for_dist(double epsilon, const char * comment="")
         pos = get_chessboard_navigation_pos();
         dist = sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y));
 
-        //Wait for 10 ms
-        usleep(10000);
+        //Wait for 1s
+        sleep(500);
     }
 
     control_direction = 0;
@@ -305,29 +310,34 @@ void* FSM(void * unused)
 
     while(1)
     {
+        //deploy webcam and raise collection
+        locate_actuator.webcam=DEPLOY;
+        locate_actuator.collect=RETRACT;
+        sleep(3)
+        locate_actuator.collect=STAY;
+        sleep(2);
+        locate_actuator.webcam=STAY;
+        
         //Move to mine
         x = offset[iter];
         y = 500;
-        //epsilon = 0.2*y;
         set_goal(x, y, 1, "Move to mine");
         wait_for_dist(epsilon,  "Move to mine");
 
         //Mine
-        //Order: start Maxon -> lower paddle -> set_goal() -> wait_for_dist() -> raise paddle -> stop Maxon
+        locate_actuator.collect=DEPLOY;
+        sleep(5);
+        locate_actuator.collect=STAY;
         x = offset[iter];
         y += 50;
-        //epsilon = 0.2*y;
+       
         
-        paddle_onoff = MOVE;
-        paddle_movement = RETRACT;
+        locate_actuator.collect=DEPLOY;
         set_goal(x, y, 1, "Mine");
-        sleep(10); //???
-        paddle_movement = STAY;
         wait_for_dist(epsilon, "Mine");
-        paddle_movement = EXTEND;
-        sleep(10); //???
-        paddle_onoff = STOP;
-        paddle_movement = STAY;
+        locate_actuator.collect=RETRACT;
+        sleep(25);
+        locate_actuator.collect=STAY;
 
         //Move to deposit
         //Align to center of arena
@@ -351,7 +361,7 @@ void* FSM(void * unused)
         
         //Deposit
         std::cout<<"\033[0;35m"<< "PATHPLAN: deposit " <<"\033[0m\n";
-        bin_movement = EXTEND;
+        bin_movement = DEPLOY;
         sleep(15); //~15s
         bin_movement = STAY;
         sleep(5); //???
