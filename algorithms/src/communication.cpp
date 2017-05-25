@@ -17,30 +17,62 @@
 
 using namespace std;
 
-char * motor_port=(char*)"/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0";
+char * motor_address=(char*)"localhost";
+int motor_port = 9002;
 
 void* communication(void * unused)
 {
+    tcp_send motor_serial(motor_address,motor_port);
     while(1)
     {
-        int file = -1;
-        while(file==-1)
+        locate_motor desired = get_desired_motor();
+        char c[100];
+        sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
+        int n = motor_serial.send(c, strlen(c));
 
-        file= open(motor_port,O_RDWR);
+        sleep(.1);
 
-        while(1)
-        {
-            locate_motor desired = get_desired_motor();
-            char c[100];
-            sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
-            int n=write(file, c, strlen(c));
-            if(n==0)
-            {
-                close(file);
-                break;
+    }
+}
+
+tcp_send::tcp_send(char* _address, int _port){
+    address = _address;
+    port = _port;
+    sock = 0;
+
+}
+int tcp_send::send(char* data, int size){
+    if(size <= 0){
+        return 0;
+    }
+    while(1){
+        while(sock<=0){
+            sock = sokcet(AF_INET, SOCK_STREAM,0);
+            if(sock==-1){
+                continue;
             }
-            sleep(.1);
-
+            struct hostent *server;
+            server = gethostbyname(address);
+            bzero((char *) &serv_addr, sizeof(serv_addr));
+            serv_addr.sin_family = AF_INET;
+            bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+            serv_addr.sin_port = htons(port);
+            int r = connect(sock,(struct sockaddr *)&serv_addr,sizeof(serv_addr));
+            if(r==-1){
+                close(sock);
+                sock = -1;
+                continue;
+            }
         }
+        int n = write(sock, data, size);
+        if(n<=0){
+            close(sock);
+            sock = -1;
+            continue;
+        }
+        else if(n!=size){
+            return tcp_send::send(&data[n],size-n) + n;
+        }
+        return n;
     }
 }
