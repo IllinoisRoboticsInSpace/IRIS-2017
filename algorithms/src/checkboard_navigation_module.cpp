@@ -51,6 +51,12 @@ long int millis()
     return tp.tv_sec * 1000 + tp.tv_usec / 1000; //get current timestamp in milliseconds
 }
 
+volatile int webcam_pos_to_serial = 0;
+
+int get_desired_webcam()
+{
+    return webcam_pos_to_serial;
+}
 
 //Global settings file
 chesspos pos_chesspos={0.,0.,0.,0};
@@ -154,12 +160,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
     int camera_id = 1;
     VideoCapture inputCapture;
     
-    tcp_send webcam_serial((char*)"localhost", 9001);
-    
-    char c_temp[100];
-    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees               
-    webcam_serial.send(c_temp,strlen(c_temp));
-    
+    webcam_pos_to_serial=((angle_offset) * angle_scale);
+     
     for (int re_connect_retries = 0;!(*stop_flag);++re_connect_retries)
     {
         cout << "Initializing webcam navigation with device " << camera_id << endl;
@@ -323,17 +325,8 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         webcam_angle = (angle_break-360+5);
                         long_turn = true;
                     }
-                   // std::string s = std::to_string(((int)webcam_angle)%180);
-                    //char buffer[s.length()];
-                   // for (int i = 0; i < s.length(); i++)
-                   //    buffer[i] = s[i];
 
-                   // int adjusted180 = (int)webcam_angle;
-                  //  if (adjusted180 > 180)
-                  //      adjusted180 = 180 - ((int)webcam_angle%180);
-                    char c_temp[100];
-                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees       
-                    webcam_serial.send(c_temp,strlen(c_temp));
+                    webcam_pos_to_serial=(int)((angle_offset+webcam_angle) * angle_scale);
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
                     double vehicle_angle = -fmod2pi((webcam_angle-90-20)*M_PI / 180. - atan2(y, x) - M_PI)+M_PI*2.;
@@ -381,11 +374,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     }
                     webcam_angle += delta_angle*sweep_dir;
                     
-                   
-                    char c_temp[100];
-                    //sprintf(c_temp, "%d\n", (int)((angle_offset+webcam_angle) * angle_scale));
-                    sprintf(c_temp, "!1,1,1,%d#!\n", (int)((angle_offset) * angle_scale)); //angle_scale is the servo magic number - pulse length to degrees 
-                    webcam_serial.send(c_temp,strlen(c_temp));
+                    webcam_pos_to_serial=(int)((angle_offset+webcam_angle) * angle_scale);
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
                     long int t = millis();
