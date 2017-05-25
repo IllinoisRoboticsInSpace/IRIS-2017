@@ -308,50 +308,50 @@ void* FSM(void * unused)
     double y;
     double epsilon = 100;
 
-    locate_actuator.webcam=STAY;
-    locate_actuator.collect=STAY;
-    locate_actuator.bin=STAY;
+    actuators.webcam=STAY;
+    actuators.collect=STAY;
+    actuators.bin=STAY;
 
 
     while(1)
     {
         //full test of the robot
         {
-            locate_actuator.webcam=DEPLOY;
+            actuators.webcam=DEPLOY;
             sleep(4);
-            locate_actuator.webcam=STAY;
+            actuators.webcam=STAY;
             sleep(2);
-            locate_actuator.webcam=RETRACT;
+            actuators.webcam=RETRACT;
             sleep(4);
-            locate_actuator.webcam=STAY;
+            actuators.webcam=STAY;
             sleep(2);
-            locate_actuator.collect=RETRACT;
+            actuators.collect=RETRACT;
             sleep(4);
-            locate_actuator.collect=STAY;
+            actuators.collect=STAY;
             sleep(2);
-            locate_actuator.collect=DEPLOY;
+            actuators.collect=DEPLOY;
             sleep(4);
-            locate_actuator.collect=STAY;
+            actuators.collect=STAY;
             sleep(2);
-            locate_actuator.bin=DEPLOY;
+            actuators.bin=DEPLOY;
             sleep(4);
-            locate_actuator.bin=STAY;
+            actuators.bin=STAY;
             sleep(2);
-            locate_actuator.bin=RETRACT;
+            actuators.bin=RETRACT;
             sleep(4);
-            locate_actuator.bin=STAY;
+            actuators.bin=STAY;
             sleep(2);
         }
         sleep(10);
         continue;
         
         //deploy webcam and raise collection
-        locate_actuator.webcam=DEPLOY;
-        locate_actuator.collect=RETRACT;
+        actuators.webcam=DEPLOY;
+        actuators.collect=RETRACT;
         sleep(3);
-        locate_actuator.collect=STAY;
+        actuators.collect=STAY;
         sleep(2);
-        locate_actuator.webcam=STAY;
+        actuators.webcam=STAY;
         
         //Move to mine
         x = offset[iter];
@@ -360,19 +360,19 @@ void* FSM(void * unused)
         wait_for_dist(epsilon,  "Move to mine");
 
         //Mine
-        locate_actuator.collect=DEPLOY;
+        actuators.collect=DEPLOY;
         sleep(5);
-        locate_actuator.collect=STAY;
+        actuators.collect=STAY;
         x = offset[iter];
         y += 50;
        
         
-        locate_actuator.collect=DEPLOY;
+        actuators.collect=DEPLOY;
         set_goal(x, y, 1, "Mine");
         wait_for_dist(epsilon, "Mine");
-        locate_actuator.collect=RETRACT;
+        actuators.collect=RETRACT;
         sleep(25);
-        locate_actuator.collect=STAY;
+        actuators.collect=STAY;
 
         //Move to deposit
         //Align to center of arena
@@ -396,13 +396,13 @@ void* FSM(void * unused)
         
         //Deposit
         std::cout<<"\033[0;35m"<< "PATHPLAN: deposit " <<"\033[0m\n";
-        locate_actuator.bin = DEPLOY;
+        actuators.bin = DEPLOY;
         sleep(15); //~15s
-        locate_actuator.bin = STAY;
+        actuators.bin = STAY;
         sleep(5); //???
-        locate_actuator.bin = RETRACT;
+        actuators.bin = RETRACT;
         sleep(10); //~10-15s
-        locate_actuator.bin = STAY;
+        actuators.bin = STAY;
 
         //Increment the iteration
         iter = (iter + 1) % 3;
