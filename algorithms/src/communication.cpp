@@ -77,7 +77,7 @@ int tcp_send::send(char* data, int size){
     }
 }
 
-int tcp_send::recieve(char* data, int size){
+int tcp_send::receive(char* data, int size){
     while(1){
 
         tcp_send::internal_reconnect();
