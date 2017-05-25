@@ -13,14 +13,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
-//#include "checkboard_navigation_module.h"
+#include "checkboard_navigation_module.h"
 //#include "data_structure.hpp"
 //#include <ros/ros.h>
 //#include "std_msgs/String.h"
 
 using namespace std;
 
-void* communication(void * unused)
+void* communication_motor(void * unused)
 {
     tcp_send motor_serial((char*)"localhost",9002);
     while(1)
@@ -28,8 +28,22 @@ void* communication(void * unused)
         locate_motor desired = get_desired_motor();
         char c[100];
         sprintf(c, "!G 1 %d_!G 2 %d_/n",desired.motor_left,desired.motor_right);
-        int n = motor_serial.send(c, strlen(c));
+        motor_serial.send(c, strlen(c));
+        sleep(.1);
 
+    }
+}
+
+void* communication_actuators(void * unused)
+{
+    tcp_send actuator_serial((char*)"localhost",9001);
+    while(1)
+    {
+        int desired_angle = get_desired_webcam();
+        locate_actuator desired = get_desired_actuator();
+        char c[100];
+        sprintf("!%d,%d,%d,%d#!",desired.collection,desired.bin,desired.webcam,desired_angle);
+        actuator_serial.send(c, strlen(c));
         sleep(.1);
 
     }
