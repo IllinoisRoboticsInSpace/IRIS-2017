@@ -173,42 +173,7 @@ void* path_planning(void* unused)
 
             pathplan_map_used = true;            
             
-            if (positionStringIsUsed) {
-                //This string stores the Json data for the path
-                positionsString = "{\"data\":[";
-                
-                //The length along the curve
-                double curveLength = 0.0;
-                
-                //The distance in centimeters by which curveLength advances each time the following loop iterates
-                double step = 1.0;
-                
-                //while next position is valid
-                pose2d currentPoint;
-                while (p->get_position(curveLength, currentPoint)) {
-					// start line with comma only if not first item
-					positionsString += (curveLength==0.0?"[":",[");
-					// x
-					positionsString += std::to_string(currentPoint.p.x);
-					positionsString += ",";
-					// y
-					positionsString += std::to_string(currentPoint.p.y);
-					positionsString += ",";
-					// theta
-					positionsString += std::to_string(currentPoint.t);
-					positionsString += "]";
-					// advance in curve length
-					curveLength+=CURVE_JSON_STEP;
-                }
-                
-                //finish string
-                positionsString += "],\"position\":["+std::to_string((int)(pos.x/5.))+".0,"+std::to_string((int)(pos.y/5.))+".0,"+std::to_string(pos.t)+
-                        "],\"target\":["+std::to_string((int)(goal_x/5.))+".0,"+std::to_string((int)(goal_y/5.))+".0,"+std::to_string(goal_t)+"]}";
-                
-                // this is the semaphore
-                //when false debug_ip_server is controlling positionsString
-                positionStringIsUsed = false;
-            }
+
             
             
             
@@ -241,7 +206,46 @@ void* path_planning(void* unused)
             desired_motor_action.motor_left=forward_cntl-turning_cntl;
  
             std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l "<< left << " r " << right <<"\033[0m\n";
- 
+            
+
+
+            if (positionStringIsUsed) {
+                //This string stores the Json data for the path
+                positionsString = "{\"data\":[";
+                
+                //The length along the curve
+                double curveLength = 0.0;
+                
+                //The distance in centimeters by which curveLength advances each time the following loop iterates
+                double step = 1.0;
+                
+                //while next position is valid
+                pose2d currentPoint;
+                while (p->get_position(curveLength, currentPoint)) {
+                    // start line with comma only if not first item
+                    positionsString += (curveLength==0.0?"[":",[");
+                    // x
+                    positionsString += std::to_string(currentPoint.p.x);
+                    positionsString += ",";
+                    // y
+                    positionsString += std::to_string(currentPoint.p.y);
+                    positionsString += ",";
+                    // theta
+                    positionsString += std::to_string(currentPoint.t);
+                    positionsString += "]";
+                    // advance in curve length
+                    curveLength+=CURVE_JSON_STEP;
+                }
+                
+                //finish string
+                positionsString += "],\"position\":["+std::to_string((int)(pos.x/5.))+".0,"+std::to_string((int)(pos.y/5.))+".0,"+std::to_string(pos.t)+
+                        "],\"target\":["+std::to_string((int)(goal_x/5.))+".0,"+std::to_string((int)(goal_y/5.))+".0,"+std::to_string(goal_t)+"],\"motor\":[" +
+                        std::to_string(desired_motor_action.motor_left) + "," + std::to_string(desired_motor_action.motor_right) + "]}";        
+                
+                // this is the semaphore
+                //when false debug_ip_server is controlling positionsString
+                positionStringIsUsed = false;
+            }
         }
         else
         {

@@ -6,7 +6,7 @@ int motor_left;
 
 locate_motor get_desired_motor();
 
-class tcp_send
+struct tcp_send
 {
 	char* address;
 	int port;
