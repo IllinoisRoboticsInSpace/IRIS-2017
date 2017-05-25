@@ -309,7 +309,7 @@ void* FSM(void * unused)
     double epsilon = 100;
 
     actuators.webcam=STAY;
-    actuators.collect=STAY;
+    actuators.collection=STAY;
     actuators.bin=STAY;
 
 
@@ -325,13 +325,13 @@ void* FSM(void * unused)
             sleep(4);
             actuators.webcam=STAY;
             sleep(2);
-            actuators.collect=RETRACT;
+            actuators.collection=RETRACT;
             sleep(4);
-            actuators.collect=STAY;
+            actuators.collection=STAY;
             sleep(2);
-            actuators.collect=DEPLOY;
+            actuators.collection=DEPLOY;
             sleep(4);
-            actuators.collect=STAY;
+            actuators.collection=STAY;
             sleep(2);
             actuators.bin=DEPLOY;
             sleep(4);
@@ -347,9 +347,9 @@ void* FSM(void * unused)
         
         //deploy webcam and raise collection
         actuators.webcam=DEPLOY;
-        actuators.collect=RETRACT;
+        actuators.collection=RETRACT;
         sleep(3);
-        actuators.collect=STAY;
+        actuators.collection=STAY;
         sleep(2);
         actuators.webcam=STAY;
         
@@ -360,19 +360,19 @@ void* FSM(void * unused)
         wait_for_dist(epsilon,  "Move to mine");
 
         //Mine
-        actuators.collect=DEPLOY;
+        actuators.collection=DEPLOY;
         sleep(5);
-        actuators.collect=STAY;
+        actuators.collection=STAY;
         x = offset[iter];
         y += 50;
        
         
-        actuators.collect=DEPLOY;
+        actuators.collection=DEPLOY;
         set_goal(x, y, 1, "Mine");
         wait_for_dist(epsilon, "Mine");
-        actuators.collect=RETRACT;
+        actuators.collection=RETRACT;
         sleep(25);
-        actuators.collect=STAY;
+        actuators.collection=STAY;
 
         //Move to deposit
         //Align to center of arena
