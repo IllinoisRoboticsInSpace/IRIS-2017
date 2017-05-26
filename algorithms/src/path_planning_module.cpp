@@ -454,7 +454,7 @@ void* FSM(void * unused)
         actuators.bin = DEPLOY;
         sleepf(22.5); 
         actuators.bin = STAY;
-        for(kkkk=0;kkkk<10;kkkk++)
+        for(int kkkk=0;kkkk<10;kkkk++)
         {
             actuators.bin = RETRACT;
             sleepf(.2);
