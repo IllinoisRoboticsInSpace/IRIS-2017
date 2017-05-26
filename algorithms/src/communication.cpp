@@ -72,6 +72,7 @@ int tcp_send::send(char* data, int size){
             printf("tcp_send: ERROR write failed %s:%d \n", address,port);
             close(sock);
             sock = -1;
+            sleep(1);
             continue;
         }
         else if(n!=size){
@@ -92,6 +93,7 @@ int tcp_send::receive(char* data, int size){
             printf("tcp_send: ERROR read failed %s:%d \n", address,port);
             close(sock);
             sock = -1;
+            sleep(1);
             continue;
         }
         return n;
@@ -103,6 +105,7 @@ void tcp_send::internal_reconnect(){
             sock = socket(AF_INET, SOCK_STREAM,0);
             if(sock==-1){
                 printf("tcp_send: ERROR socket failed\n");
+                sleep(1);
                 continue;
             }
             struct sockaddr_in serv_addr;
@@ -117,6 +120,7 @@ void tcp_send::internal_reconnect(){
                 printf("tcp_send: ERROR connect failed: %s:%d\n", address,port);
                 close(sock);
                 sock = -1;
+                sleep(1);
                 continue;
             }
             printf("tcp_send: success socket connection %s:%d \n", address,port);
