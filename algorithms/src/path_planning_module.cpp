@@ -35,7 +35,7 @@ const double K_TURN_CONTROL = 250;
 volatile double goal_x=0.;
 volatile double goal_y=0.;
 volatile double goal_t=M_PI;
-enum{FORWARD=1, BACKWARDS =-1, ANY_DIR=0};
+enum{FORWARD=1, BACKWARDS =-1, ANY_DIR=3};
 volatile int control_direction=ANY_DIR;
 extern MATRIX pathplan_map;
 
@@ -218,8 +218,14 @@ void* path_planning(void* unused)
                 turning_cntl/=normalizer/1000.;
                 forward_cntl/=normalizer/1000.;
             }
+            if(control_direction!=0){
             desired_motor_action.motor_right=forward_cntl+turning_cntl;
             desired_motor_action.motor_left=forward_cntl-turning_cntl;
+            }
+            else{
+                desired_motor_action.motor_right=0;
+                desired_motor_action.motor_left=0;
+            }
  
             std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l " << desired_motor_action.motor_left << " r " << desired_motor_action.motor_right <<"\033[0m\n";
             
@@ -328,48 +334,46 @@ void* FSM(void * unused)
     actuators.webcam=STAY;
     actuators.collection=STAY;
     actuators.bin=STAY;
-
-
-    while(1)
-    {
-        //full test of the robot
-        {
-            actuators.webcam=DEPLOY;
-            sleep(4);
-            actuators.webcam=STAY;
-            sleep(2);
-            actuators.webcam=RETRACT;
-            sleep(4);
-            actuators.webcam=STAY;
-            sleep(2);
-            actuators.collection=RETRACT;
-            sleep(4);
-            actuators.collection=STAY;
-            sleep(2);
-            actuators.collection=DEPLOY;
-            sleep(4);
-            actuators.collection=STAY;
-            sleep(2);
-            actuators.bin=DEPLOY;
-            sleep(4);
-            actuators.bin=STAY;
-            sleep(2);
-            actuators.bin=RETRACT;
-            sleep(4);
-            actuators.bin=STAY;
-            sleep(2);
-        }
-        sleep(10);
-        continue;
+        // //full test of the robot
+        // {
+        //     actuators.webcam=DEPLOY;
+        //     sleep(4);
+        //     actuators.webcam=STAY;
+        //     sleep(2);
+        //     actuators.webcam=RETRACT;
+        //     sleep(4);
+        //     actuators.webcam=STAY;
+        //     sleep(2);
+        //     actuators.collection=RETRACT;
+        //     sleep(4);
+        //     actuators.collection=STAY;
+        //     sleep(2);
+        //     actuators.collection=DEPLOY;
+        //     sleep(4);
+        //     actuators.collection=STAY;
+        //     sleep(2);
+        //     actuators.bin=DEPLOY;
+        //     sleep(4);
+        //     actuators.bin=STAY;
+        //     sleep(2);
+        //     actuators.bin=RETRACT;
+        //     sleep(4);
+        //     actuators.bin=STAY;
+        //     sleep(2);
+        // }
+        // sleep(10);
+        // continue;
         
         //deploy webcam and raise collection
         actuators.webcam=DEPLOY;
         actuators.collection=RETRACT;
-        sleep(3);
+        sleep(4.5);
         actuators.collection=STAY;
         sleep(2);
         actuators.webcam=STAY;
         
+    while(1)
+    {
         //Move to mine
         x = offset[iter];
         y = 500;
@@ -377,19 +381,29 @@ void* FSM(void * unused)
         wait_for_dist(epsilon,  "Move to mine");
 
         //Mine
-        actuators.collection=DEPLOY;
-        sleep(5);
-        actuators.collection=STAY;
-        x = offset[iter];
-        y += 50;
-       
-        
-        actuators.collection=DEPLOY;
-        set_goal(x, y, 1, "Mine");
-        wait_for_dist(epsilon, "Mine");
+        for(int iiii=0; iiii<2; iiii++){
+            actuators.collection=DEPLOY;
+            sleep(5.5); //TODO Figure out actual time
+            actuators.collection=STAY;
+            x = offset[iter];
+            y += 50;
+            set_goal(x, y, 1, "Mine");
+            sleep(4);
+            actuators.collection=RETRACT;
+            sleep(5.5);
+            actuators.collection=STAY;
+        }
+
         actuators.collection=RETRACT;
-        sleep(25);
+        sleep(17.5);//TODO FIGURE OUT TIME
         actuators.collection=STAY;
+        x=0;
+        y-=100;
+        set_goal(x,y,-1,"Move to deposit");
+        wait_for_dist(epsilon,"Move to deposit");
+        actuators.collection=DEPLOY;
+        sleep(16.5); //TODO
+        actuators.collection=STAY
 
         //Move to deposit
         //Align to center of arena
@@ -408,17 +422,22 @@ void* FSM(void * unused)
 
         //Now just move straight back until we reack the collection bin
         std::cout<<"\033[0;35m"<< "PATHPLAN: approaching into bin" <<"\033[0m\n";
-        control_direction = BACKWARDS;
-        sleep(10); //???
+        x=0;
+        y=-100;
+        set_goal(x, y, -1,"Move up to bin");
+        sleep(5); //???
         
         //Deposit
         std::cout<<"\033[0;35m"<< "PATHPLAN: deposit " <<"\033[0m\n";
+        actuators.collection=DEPLOY;
+        sleep(1);
+        actuators.collection=STAY;3
         actuators.bin = DEPLOY;
-        sleep(15); //~15s
+        sleep(22.5); //~15s
         actuators.bin = STAY;
         sleep(5); //???
         actuators.bin = RETRACT;
-        sleep(10); //~10-15s
+        sleep(21.0); //~10-15s
         actuators.bin = STAY;
 
         //Increment the iteration
