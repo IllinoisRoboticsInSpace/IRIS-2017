@@ -312,7 +312,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         lastDelta=delta;
                         printf("THIS IS DELTA YO %f\n", lastDelta);
                     }
-                    float actual_webcam_angle=webcam_angle+c*180. / M_PI
+                    float actual_webcam_angle=webcam_angle+c*180. / M_PI;
                     if (abs(delta) > 1)
                         webcam_angle += delta;
                     bool long_turn = false;
