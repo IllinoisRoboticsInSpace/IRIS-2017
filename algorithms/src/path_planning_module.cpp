@@ -193,7 +193,7 @@ void* path_planning(void* unused)
             }
             else
             {
-				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<<<"\033[0m\n";
+				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";
                 turning_cntl=0;
                 forward_cntl=0;
             }
