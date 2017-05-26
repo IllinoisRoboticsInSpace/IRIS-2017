@@ -313,6 +313,8 @@ void wait_for_dist(double epsilon, const char * comment="")
     control_direction = 0;
 }
 
+bool kinect_is_not_collecting=true;
+
 //Main Finite State Machine
 void* FSM(void * unused)
 {
@@ -425,4 +427,9 @@ void* FSM(void * unused)
         iter = (iter + 1) % 3;
         std::cout<<"\033[0;35m"<< "PATHPLAN: New iteration "<<iter  <<" of type "<< offset[iter] <<"\033[0m\n";
     }
+}
+
+bool kinect_is_ready()
+{
+    return kinect_is_not_collecting;
 }
