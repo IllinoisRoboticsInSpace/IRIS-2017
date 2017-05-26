@@ -29,7 +29,7 @@ const double CURVE_JSON_STEP = 1;
 const double POINT1_CURVE_LENGTH = 4;
 const double POINT2_CURVE_LENGTH = 8;
 const double F_FORWARD_CONTROL = 500;
-const double K_TURN_CONTROL = 180;
+const double K_TURN_CONTROL = 300;
 
 //Global variables
 volatile double goal_x=0.;
@@ -204,7 +204,7 @@ void* path_planning(void* unused)
                 
                 double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
                 
-                turning_cntl=direction*K_TURN_CONTROL*theta;
+                turning_cntl=K_TURN_CONTROL*theta;
                 forward_cntl=direction*F_FORWARD_CONTROL;
                 
                 wtd_time_path_plan=millis();
