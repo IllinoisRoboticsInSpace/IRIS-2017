@@ -300,6 +300,7 @@ void* thread_depth(void* arg)
                             historic(x_i+xPos,y_i+yPos) = gradient(x_i,y_i);
                     }
                 }
+                std::cout<<"\033[0;31m"<<"KINECT: localization data succesfully merged"<<"\033[0m\n";
             }else
             {
                 std::cout<<"\033[0;31m"<<"KINECT: localization data is too old to merge historic: timestamp_location="<<robot_pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";

@@ -181,22 +181,34 @@ void* path_planning(void* unused)
             
             
             pose2d point1,point2;
-            if(millis()-pos.millis<2500 
-                && p->get_position(POINT1_CURVE_LENGTH, point1) 
-                && p->get_position(POINT2_CURVE_LENGTH, point2))
+            turning_cntl=0;
+            forward_cntl=0;
+            switch(0)
             {
+                default:
+                if(millis()-pos.millis>2500)
+                {
+                    std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";
+                    break;
+                }
+                if( ! p->get_position(POINT1_CURVE_LENGTH, point1) )
+                {
+                    std::cout<<"\033[0;32m"<< "PATHPLAN: ********* path is too short to move!! ******** : point1"<<"\033[0m\n";
+                    break;
+                }
+                if( ! p->get_position(POINT2_CURVE_LENGTH, point2) )
+                {
+                    std::cout<<"\033[0;32m"<< "PATHPLAN: ********* path is too short to move!! ******** : point2"<<"\033[0m\n";
+                    break;
+                }
+           
             
                 double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
                 
                 turning_cntl=direction*K_TURN_CONTROL*theta;
                 forward_cntl=direction*F_FORWARD_CONTROL;
             }
-            else
-            {
-				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";
-                turning_cntl=0;
-                forward_cntl=0;
-            }
+
             
             //normalize and get right and left values
             double normalizer=absd(turning_cntl)+absd(forward_cntl);
