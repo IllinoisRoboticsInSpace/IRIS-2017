@@ -91,10 +91,8 @@ locate_motor desired_motor_action;
 
 void* path_planning(void* unused)
 {
-    //Initialize ROS node and publisher
     int count_loops=0;
-//    ros::NodeHandle n;
-//    ros::Publisher pub_control=n.advertise<std_msgs::String>("/IRIS/autonomous_command", 1);
+    long int wtd_time_path_plan=millis();
     chesspos poss = {0,0,0,0};
     while(poss.millis==0) //wait for first location
         poss = get_chessboard_navigation_pos();
@@ -202,16 +200,19 @@ void* path_planning(void* unused)
                     break;
                 }
            
-            
+                std::cout<<"\033[0;32m"<< "PATHPLAN: sending action to motors"<<"\033[0m\n";
+                
                 double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
                 
                 turning_cntl=direction*K_TURN_CONTROL*theta;
                 forward_cntl=direction*F_FORWARD_CONTROL;
+                
+                wtd_time_path_plan=millis();
             }
 
             
             //normalize and get right and left values
-            double normalizer=absd(turning_cntl)+absd(forward_cntl);
+            double normalizer=max(absd(turning_cntl),absd(forward_cntl));
             if(normalizer>1000.)
             {
                 turning_cntl/=normalizer/1000.;
@@ -261,11 +262,15 @@ void* path_planning(void* unused)
                 //when false debug_ip_server is controlling positionsString
                 positionStringIsUsed = false;
             }
+            
         }
         else
         {
+            if(millis()-wtd_time_path_plan>2500)
+            {
             desired_motor_action.motor_right=0;
             desired_motor_action.motor_left=0;
+            }
         }
         
         count_loops++;
