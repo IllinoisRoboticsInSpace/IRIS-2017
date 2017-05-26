@@ -184,7 +184,7 @@ void* path_planning(void* unused)
             switch(0)
             {
                 default:
-                if(millis()-pos.millis>2500)
+                if(millis()-pos.millis>4000)
                 {
                     std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";
                     break;
@@ -213,7 +213,7 @@ void* path_planning(void* unused)
             
             //normalize and get right and left values
             double normalizer=max(absd(turning_cntl),absd(forward_cntl));
-            if(normalizer>1000.)
+            //if(normalizer>1000.)
             {
                 turning_cntl/=normalizer/1000.;
                 forward_cntl/=normalizer/1000.;
