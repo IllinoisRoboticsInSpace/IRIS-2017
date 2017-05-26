@@ -193,7 +193,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
 
         cout << "Webcam navigation ready!" << endl;
 
-        int count_lost = 0;
+        int count_lost = 9999;
 
         for (int i = 0;!(*stop_flag);++i)
         {
@@ -357,7 +357,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
             else
             {
                 count_lost++;
-                if (count_lost > 3)
+                if (count_lost > 10)
                 {
                     static int sweep_dir;
                     cout << "WEBCAM: too long lost, doing 180s\n";
