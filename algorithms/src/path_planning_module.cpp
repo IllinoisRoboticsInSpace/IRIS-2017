@@ -193,7 +193,7 @@ void* path_planning(void* unused)
             }
             else
             {
-				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<"\033[0m\n";
+				std::cout<<"\033[0;32m"<< "PATHPLAN: ********* position is too old ******** "<<": timestamp_location="<<pos.millis<<" timestamp_current="<<millis()<<<<"\033[0m\n";
                 turning_cntl=0;
                 forward_cntl=0;
             }
@@ -208,7 +208,7 @@ void* path_planning(void* unused)
             desired_motor_action.motor_right=forward_cntl+turning_cntl;
             desired_motor_action.motor_left=forward_cntl-turning_cntl;
  
-            std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l "<< left << " r " << right <<"\033[0m\n";
+            std::cout<<"\033[0;32m"<< "PATHPLAN: current "<<pos.x<<" "<<pos.y<<" "<<pos.t<<" target "<< goal_x << " " << goal_y << " action l " << desired_motor_action.motor_left << " r " << desired_motor_action.motor_right <<"\033[0m\n";
             
 
 

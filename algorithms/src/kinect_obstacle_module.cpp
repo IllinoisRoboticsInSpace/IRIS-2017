@@ -300,6 +300,9 @@ void* thread_depth(void* arg)
                             historic(x_i+xPos,y_i+yPos) = gradient(x_i,y_i);
                     }
                 }
+            }else
+            {
+                std::cout<<"\033[0;31m"<<"KINECT: localization data is too old to merge historic: timestamp_location="<<robot_pos.millis<<" timestamp_current="<<millis()<<"\033[0m\n";
             }
             
             if(pathplan_map_used)
@@ -361,11 +364,11 @@ void* thread_depth(void* arg)
                 }
                 map_json+="],\"position\":["+std::to_string((int)xPos)+".0,"+std::to_string((int)yPos)+".0,"+std::to_string(robot_pos.t)+"]}";
                 tcpip_map_used = false;
-                std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
+                //std::cout<<"\033[0;31m"<<"IP SERVER image_ready"<<"\033[0m\n";
 
             }
-						else
-							std::cout<<"\033[0;31m"<<"IP SERVER image discarded"<<"\033[0m\n";
+						//else
+							//std::cout<<"\033[0;31m"<<"IP SERVER image discarded"<<"\033[0m\n";
 
             
         }
