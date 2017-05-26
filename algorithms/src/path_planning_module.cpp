@@ -329,6 +329,7 @@ void sleepf(float f)
 //Main Finite State Machine
 void* FSM(void * unused)
 {
+    printf("STARTING FSM ***********************************");
     //Sequentially move through the different states: move_to_mine -> mine -> move_to_deposit -> deposit
     //Offset for varying the x-axis position of the goal states and iteration level
     int offset[3] = {0, 100, -100};
