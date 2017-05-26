@@ -37,7 +37,7 @@ using namespace std;
 
 #define ROS_INFO(a) printf("%s",a) 
 
-
+bool kinect_is_ready();
 void* thread_display(void* arg);
 
 
@@ -287,7 +287,7 @@ void* thread_depth(void* arg)
             int xPos=robot_pos.x/5; //position of the robot (true one)
             int yPos=robot_pos.y/5;
 
-            if(millis()-robot_pos.millis<1000)
+            if(millis()-robot_pos.millis<1000 && kinect_is_ready())
             {
                 //PROJECT COMPUTED GRADIENT INTO HISTORIC MAP //
                 for(int x_i =-gradientHalfSizeX ; x_i < gradientHalfSizeX; x_i++)
