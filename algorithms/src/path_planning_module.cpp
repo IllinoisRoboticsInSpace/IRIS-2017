@@ -321,6 +321,11 @@ void wait_for_dist(double epsilon, const char * comment="")
 
 bool kinect_is_not_collecting=true;
 
+void sleepf(float f)
+{
+    usleep(1000000*f);
+}
+
 //Main Finite State Machine
 void* FSM(void * unused)
 {
@@ -331,7 +336,7 @@ void* FSM(void * unused)
 
     double x;
     double y;
-    double epsilon = 100;
+    double epsilon = 250;
 
     actuators.webcam=STAY;
     actuators.collection=STAY;
@@ -369,7 +374,7 @@ void* FSM(void * unused)
         //deploy webcam and raise collection
         actuators.webcam=DEPLOY;
         actuators.collection=RETRACT;
-        sleep(4.5);
+        sleep(5.5);
         actuators.collection=STAY;
         sleep(2);
         actuators.webcam=STAY;
@@ -381,66 +386,81 @@ void* FSM(void * unused)
         y = 500;
         set_goal(x, y, 1, "Move to mine");
         wait_for_dist(epsilon,  "Move to mine");
-
+        
+        kinect_is_not_collecting=false;
+        actuators.collection=DEPLOY;
+        sleepf(3);
         //Mine
         for(int iiii=0; iiii<2; iiii++){
             actuators.collection=DEPLOY;
-            sleep(5.5); //TODO Figure out actual time
+            sleepf(3.5); //TODO Figure out actual time
             actuators.collection=STAY;
             x = offset[iter];
             y += 50;
             set_goal(x, y, 1, "Mine");
-            sleep(4);
+            sleepf(4);
+            y-=100;
+            set_goal(x, y, -1, "Mine");
+            sleepf(1);
+            y+=50;
+            control_direction=0;
             actuators.collection=RETRACT;
-            sleep(5.5);
+            sleepf(3.5);
             actuators.collection=STAY;
+            y += 50;
+            set_goal(x, y, 1, "Mine");
+            sleepf(1);
+            control_direction=0;
         }
-
-        actuators.collection=RETRACT;
-        sleep(17.5);//TODO FIGURE OUT TIME
-        actuators.collection=STAY;
-        x=0;
-        y-=100;
-        set_goal(x,y,-1,"Move to deposit");
-        wait_for_dist(epsilon,"Move to deposit");
-        actuators.collection=DEPLOY;
-        sleep(16.5); //TODO
-        actuators.collection=STAY
-
+        
         //Move to deposit
         //Align to center of arena
+        actuators.collection=RETRACT;
+        sleepf(17.5);//TODO FIGURE OUT TIME
         x = 0;
         y = 297;
-        //epsilon = 0.2*y;
+        set_goal(x, y, -1, "Move to deposit center");
+        actuators.collection=STAY;
+        sleepf(5);
+        actuators.collection=DEPLOY;
+        sleepf(15.5);
+        actuators.collection=STAY;
+        wait_for_dist(epsilon,"Move to deposit center");
+        x=0;
+        y=0;
         set_goal(x, y, -1,"Move to deposit");
-        wait_for_dist(epsilon,"Move to deposit");
+        wait_for_dist(epsilon,"Move to deposit",20);
+        actuators.collection=DEPLOY;
+        sleepf(5.5); //TODO
+        actuators.collection=STAY;
 
         //Move up to bin
         x = 0;
         y = -50;
         //epsilon = 100;
         set_goal(x, y, -1,"Move up to bin");
-        wait_for_dist(epsilon, "Move up to bin");
-
-        //Now just move straight back until we reack the collection bin
-        std::cout<<"\033[0;35m"<< "PATHPLAN: approaching into bin" <<"\033[0m\n";
-        x=0;
-        y=-100;
-        set_goal(x, y, -1,"Move up to bin");
-        sleep(5); //???
+        sleepf(2);
         
         //Deposit
-        std::cout<<"\033[0;35m"<< "PATHPLAN: deposit " <<"\033[0m\n";
-        actuators.collection=DEPLOY;
-        sleep(1);
-        actuators.collection=STAY;3
         actuators.bin = DEPLOY;
-        sleep(22.5); //~15s
+        sleepf(22.5); 
         actuators.bin = STAY;
-        sleep(5); //???
+        for(kkkk=0;kkkk<10;kkkk++)
+        {
+            actuators.bin = RETRACT;
+            sleepf(.2);
+            actuators.bin = DEPLOY;
+            sleepf(.2);
+        }
         actuators.bin = RETRACT;
-        sleep(21.0); //~10-15s
+        sleepf(21.0); 
         actuators.bin = STAY;
+
+        actuators.collection=RETRACT;
+        sleepf(5.5); //TODO
+        actuators.collection=STAY;
+        
+        kinect_is_not_collecting=true;
 
         //Increment the iteration
         iter = (iter + 1) % 3;
