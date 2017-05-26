@@ -28,7 +28,7 @@ void* communication_motor(void * unused)
     {
         locate_motor desired = get_desired_motor();
         char c[100];
-        sprintf(c, "!G 1 %d_!G 2 %d_\n",desired.motor_left,-desired.motor_right);
+        sprintf(c, "!G 1 %d_!G 2 %d_\n",-desired.motor_left,desired.motor_right);
         //printf("%s",c);
         motor_serial.send(c, strlen(c));
         sleep(1);
