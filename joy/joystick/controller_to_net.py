@@ -54,9 +54,10 @@ if __name__ == '__main__':
                     print('received actuator: %s'%s_actuator.recv(10000))
                 except:
                     pass
-        except:
-            print("reconnecting")
-            time.sleep(.001)
+        except Exception as e:
+            print("ERROR %s"%e)
+            print("reconnecting ... ")
+            time.sleep(1)
             try:
                 s_motor.close()
             except:
