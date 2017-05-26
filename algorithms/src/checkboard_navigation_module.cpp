@@ -312,6 +312,7 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                         lastDelta=delta;
                         printf("THIS IS DELTA YO %f\n", lastDelta);
                     }
+                    float actual_webcam_angle=webcam_angle+c*180. / M_PI
                     if (abs(delta) > 1)
                         webcam_angle += delta;
                     bool long_turn = false;
@@ -329,11 +330,11 @@ void* init_chessboard_navigation(void * stop_flag_ptr )
                     webcam_pos_to_serial=(int)((angle_offset+webcam_angle) * angle_scale);
                     printf("Angle sent:%d = %d in the serial\n", (int)webcam_angle, (int)((angle_offset+webcam_angle) * angle_scale));
                     
-                    double vehicle_angle = -fmod2pi((webcam_angle-90-20)*M_PI / 180. - atan2(y, x) - M_PI)+M_PI*2.;
+                    double vehicle_angle = -fmod2pi((actual_webcam_angle-90-20)*M_PI / 180. - atan2(y, x) - M_PI)+M_PI*2.;
 
                     cout << "webcam nav " << "x(cm) " << x << " y(cm) " << y << " "
                          << "x(in) " << x/2.54 << " y(in) " << y/2.54 << endl
-                         << "webcam angle th " << webcam_angle
+                         << "webcam angle command th " << webcam_angle << " actual webcam angle "<<actual_webcam_angle 
                          << " delta " << delta << " vehicle \e[35m" << vehicle_angle*180. / M_PI << "\e[0m" <<endl;
 
                     //while (lock);
