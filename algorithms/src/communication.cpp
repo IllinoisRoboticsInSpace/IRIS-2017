@@ -22,6 +22,7 @@ using namespace std;
 
 void* communication_motor(void * unused)
 {
+    printf("COMMUNICATION: start motor");
     tcp_send motor_serial((char*)"localhost",9002);
     while(1)
     {
@@ -37,6 +38,7 @@ void* communication_motor(void * unused)
 
 void* communication_actuators(void * unused)
 {
+    printf("COMMUNICATION: start actuators");
     tcp_send actuator_serial((char*)"localhost",9001);
     while(1)
     {
