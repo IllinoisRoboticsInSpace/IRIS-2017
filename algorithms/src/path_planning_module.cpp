@@ -202,9 +202,9 @@ void* path_planning(void* unused)
            
                 std::cout<<"\033[0;32m"<< "PATHPLAN: sending action to motors"<<"\033[0m\n";
                 
-                double theta=fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
+                double theta=-fmod(point2.t-point1.t+M_PI,2*M_PI)-M_PI;
                 
-                turning_cntl=K_TURN_CONTROL*theta;
+                turning_cntl=direction*K_TURN_CONTROL*theta;
                 forward_cntl=direction*F_FORWARD_CONTROL;
                 
                 wtd_time_path_plan=millis();
@@ -212,7 +212,7 @@ void* path_planning(void* unused)
 
             
             //normalize and get right and left values
-            double normalizer=max(absd(turning_cntl),absd(forward_cntl));
+            double normalizer=(absd(turning_cntl)+absd(forward_cntl));
             //if(normalizer>1000.)
             {
                 turning_cntl/=normalizer/1000.;
