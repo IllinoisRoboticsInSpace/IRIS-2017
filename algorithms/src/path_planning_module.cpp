@@ -299,13 +299,14 @@ void set_goal(double x, double y, int dir, const char * comment="")
 }
 
 //Waits until robot reaches destination within specified tolerance
-void wait_for_dist(double epsilon, const char * comment="")
+void wait_for_dist(double epsilon, const char * comment="", int maxtime=9999)
 {
     std::cout<<"\033[0;35m"<< "PATHPLAN: wait_for_dist "<< epsilon << " " << comment <<"\033[0m\n";
     //Wait in here until the robot position is at or within the allowed tolerance
     chesspos pos = get_chessboard_navigation_pos();
     double dist = sqrt(pow2(goal_x - pos.x) + pow2(goal_y - pos.y));
 
+    int count=maxtime*2;
     while(dist > epsilon)
     {
         //Recompute distance from goal
@@ -314,6 +315,13 @@ void wait_for_dist(double epsilon, const char * comment="")
 
         //Wait for 1s
         sleep(500);
+        count--;
+        if(count<=0)
+        {
+            printf("\033[0;35mTIMEOUT IN FSM *******************************************\033[0m\n");
+            break;
+        }
+        
     }
 
     control_direction = 0;
@@ -329,7 +337,7 @@ void sleepf(float f)
 //Main Finite State Machine
 void* FSM(void * unused)
 {
-    printf("STARTING FSM ***********************************");
+    printf("STARTING FSM ***********************************\n");
     //Sequentially move through the different states: move_to_mine -> mine -> move_to_deposit -> deposit
     //Offset for varying the x-axis position of the goal states and iteration level
     int offset[3] = {0, 100, -100};
