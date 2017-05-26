@@ -31,7 +31,7 @@ void* communication_motor(void * unused)
         sprintf(c, "!G 1 %d_!G 2 %d_\n",-desired.motor_left,desired.motor_right);
         //printf("%s",c);
         motor_serial.send(c, strlen(c));
-        sleep(.1);
+        usleep(100*1000);
 
     }
 }
@@ -48,7 +48,7 @@ void* communication_actuators(void * unused)
         sprintf(c,"!%d,%d,%d,%d#!\n",desired.collection,desired.bin,desired.webcam,desired_angle);
         //printf("%s",c);
         actuator_serial.send(c, strlen(c));
-        sleep(.1);
+        usleep(100*1000);
 
     }
 }
