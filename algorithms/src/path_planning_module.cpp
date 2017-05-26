@@ -29,7 +29,7 @@ const double CURVE_JSON_STEP = 1;
 const double POINT1_CURVE_LENGTH = 4;
 const double POINT2_CURVE_LENGTH = 8;
 const double F_FORWARD_CONTROL = 500;
-const double K_TURN_CONTROL = 450;
+const double K_TURN_CONTROL = 250;
 
 //Global variables
 volatile double goal_x=0.;
