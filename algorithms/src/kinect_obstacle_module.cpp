@@ -510,12 +510,12 @@ void* init_kinect_mapping(void * stop_flag)
                                 cout << "KINECT PThread_create failed.(5)\n";
                                 return 0;
                         }
-
+                        sleep(15);
                         while (!(*async_stop_flag))
                         {
                                 //need watchdog
                                 got_data_kinect = false;
-                                sleep(5);
+                                sleep(10);
                                 if(!got_data_kinect)
                                 {
                                     cout << "KINECT ERROR watchdog is triggering restart\n";
