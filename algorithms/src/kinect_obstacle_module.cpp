@@ -463,9 +463,9 @@ void* init_kinect_mapping(void * stop_flag)
                         if (freenect_init(&f_ctx, NULL) < 0)
                         {
                                 cout << "Freenect_init() failed.(1)\n";
-                                return 0;
+                                break;
                         }
-                        freenect_set_log_level(f_ctx, FREENECT_LOG_DEBUG);
+                        //freenect_set_log_level(f_ctx, FREENECT_LOG_DEBUG);
 
                         while (!(*async_stop_flag))
                         {
