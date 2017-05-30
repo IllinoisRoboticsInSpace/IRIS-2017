@@ -425,14 +425,14 @@ void* FSM(void * unused)
         //Move to deposit
         //Align to center of arena
         actuators.collection=RETRACT;
-        sleepf(17.5);//TODO FIGURE OUT TIME
+        sleepf(24.5);//TODO FIGURE OUT TIME
         x = 0;
         y = 297;
         set_goal(x, y, -1, "Move to deposit center");
         actuators.collection=STAY;
         sleepf(5);
         actuators.collection=DEPLOY;
-        sleepf(15.5);
+        sleepf(22.5);
         actuators.collection=STAY;
         wait_for_dist(epsilon,"Move to deposit center");
         x=0;
